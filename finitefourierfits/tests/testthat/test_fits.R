@@ -43,7 +43,7 @@ test_that("complicated terms agglomerate correctly", {
     expect_equal(build.formula("y", 1:4, phi),
                  formula(y ~ b +
                              a2 * cos(1 * u(x) - 1) +
-                             a3 * cos(2 * u(x) + 2.71828) + 
+                             a3 * cos(2 * u(x) + 2.71828) +
                              a4 * cos(3 * u(x) + 1.9822971502571)))
 })
 
@@ -52,5 +52,3 @@ test_that("rounding isn't an issue when building formulae", {
                  eval(bquote(formula(y ~ b +
                                          a5 * cos(4 * u(x) + .(phi[5]))))))
 })
-                                      
-

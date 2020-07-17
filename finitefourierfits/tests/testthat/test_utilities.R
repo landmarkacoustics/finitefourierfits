@@ -12,7 +12,7 @@ test_that("argmin works", {
 })
 
 
-test_that("frequencies works", {
-    expect_equal(frequencies(4), c(0, pi/2, pi, 3*pi/2))
-    expect_equal(frequencies(1), 0)
+test_that("omegas works", {
+    expect_equal(omegas(4), c(0, pi/2, pi, 3*pi/2))
+    expect_equal(omegas(1), 0)
 })

@@ -38,7 +38,7 @@ build.term <- function(index, phase, variable.name="a") {
 
 #' A formula that describes a Finite Fourier Fit
 #'
-#' See \code{\link{build.terms}} for the details of how each term is built.
+#' See \code{\link{build.term}} for the details of how each term is built.
 #'
 #' @param response A string or expression that will be the lhs. of the formula.
 #' @param indices.to.use Which terms of the DFT to use in the formula.
@@ -47,6 +47,7 @@ build.term <- function(index, phase, variable.name="a") {
 #' @return a formula that represents a Finite Fourier Basis.
 #' @examples
 #' build.formula("y - mu", 1:4, rnorm(10) %% pi)
+#' @export
 build.formula <- function(response, indices.to.use, all.phases) {
     terms <- list()
     for (i in indices.to.use) {
@@ -65,7 +66,7 @@ build.starts <- function(term.order, term.var, variable.name="a") {
     return(v)
 }
 
-
+#' @importFrom stats BIC as.formula
 best.fit <- function(fit.list) {
     v <- sapply(fit.list, BIC)
     i <- argmin(v)

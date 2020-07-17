@@ -15,6 +15,3 @@ the index of the smallest item in the collection.
 \description{
 \code{argmin} acts just like the mathematical concept it is named after.
 }
-\examples{
-argmin(seq(-1, 10, 10)^2)
-}

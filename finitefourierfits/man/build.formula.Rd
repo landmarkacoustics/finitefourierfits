@@ -18,7 +18,7 @@ Elements are chosen with \code{indices.to.use}.}
 a formula that represents a Finite Fourier Basis.
 }
 \description{
-See \code{\link{build.terms}} for the details of how each term is built.
+See \code{\link{build.term}} for the details of how each term is built.
 }
 \examples{
 build.formula("y - mu", 1:4, rnorm(10) \%\% pi)

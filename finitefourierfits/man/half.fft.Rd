@@ -16,7 +16,3 @@ An integer equal to half of \code{fft.size}, rounded down.
 \code{half.fft} returns the pivot index between the positive and negative
 frequencies in the output of \code{\link{fft}}.
 }
-\examples{
-half.fft(512)
-half.fft(23)
-}

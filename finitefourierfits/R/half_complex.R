@@ -7,9 +7,6 @@
 #'
 #' @param fft.size The length of the Discrete Fourier Transform window.
 #' @return An integer equal to half of \code{fft.size}, rounded down.
-#' @examples
-#' half.fft(512)
-#' half.fft(23)
 half.fft <- function(fft.size) {
     return(as.integer(fft.size/2))
 }

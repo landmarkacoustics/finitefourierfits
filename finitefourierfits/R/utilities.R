@@ -6,8 +6,6 @@
 #'
 #' @param x Some collection, probably a \code{\link{vector}} of some kind.
 #' @return the index of the smallest item in the collection.
-#' @examples
-#' argmin(seq(-1, 10, 10)^2)
 argmin <- function(x) {
     return(match(min(x), x))
 }
@@ -20,7 +18,8 @@ argmin <- function(x) {
 #' @param fft.size The size of the DFT
 #' @return a vector of floats of length \code{fft.size} in \eqn{[0, 2\pi)}.
 #' @examples
-#' frequencies(4)
-frequencies <- function(fft.size) {
+#' omegas(4)
+#' @export
+omegas <- function(fft.size) {
     return(2 * pi * seq(0, fft.size - 1) / fft.size)
 }

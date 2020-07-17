@@ -1,0 +1,124 @@
+---
+title: "lab-notebook"
+output: rmarkdown::html_vignette
+description: >
+  A lab notebook for finitefourierfits. This is basically a dev diary.
+vignette: >
+  %\VignetteIndexEntry{lab-notebook}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>"
+)
+```
+
+```{r setup}
+library(finitefourierfits)
+```
+# 2020 July 13-15
+
+I developed the basic algorithm ideas over these days. The goal is to take a
+bivariate relation that seems to be functional and fit a partial Fourier basis
+to it. Fewer terms will mean less computational complexity and more smoothness.
+
+The steps that I came up with are
+
+1. pad the response variable with zeros so that its length is more than doubled
+and a power of two.
+
+1. find a mapping, `u(x)`, from the causal variable to angular frequency.
+
+1. compute the DFT of the padded variable with `fft`
+
+   1. use `Mod` to compute `a`, the amplitudes of each term in the DFT.
+   
+   1. use `Arg` to compute `p`, the phases of each term in the DFT.
+
+1. choose a limited number of terms to include
+
+   1. I started by trying to quantify the proportion of information captured by
+   each term
+   
+   1. I ended up just using a fixed number of terms
+   
+1. build a formula to use with `nls`
+
+   1. the l.h.s. is just the response variable 
+
+   1. the r.h.s is built from the DFT's terms
+   
+      1. if the CF term is included, just add a term called `b`.
+	  
+	  1. if term `i` is included, add `a{i} * cos({i-1} * u(x) + {p[i]})`
+	  
+	     1. if `i=3` & `p[3] =-1.1` then the term is `a3 * cos(2 * u(x) - 1.1)`
+		 
+   1. it turned out that the phases didn't change much when I let them vary,
+   so I decided to set them as constants. This may cause problems with
+   numerical precision because they are actually pasted into the formulae.
+   
+1. run the `nls` fit to find the values of `b` (if necessary) and the `a_i`s
+
+1. the resulting function is the approximation.
+
+
+# 2020 July 16
+
+This was the first day that I started working on this project as a package.
+I am using Hadley Wickham's [e-book](http://r-pkgs.had.co.nz) about making R
+packages as a guide. The first hour was spent installing the tools. Wickham's
+package, `devtools`, depends on the library `pandoc` and the development
+libraries for `curl` and `openssl`. The error messages from the failed install
+ended up leading me to them. In general, the e-book is not up-to-date with the
+CRAN package including, ironically, creating vignettes. I actually didn't write
+any vignette on this day at all. I did create roxygen documentation for some
+functions, made progress with the linter `lintr`, and wrote some unit tests as
+well.
+
+
+# 2020 July 17
+
+Today is when I actually started writing this vignette. One guide that I am
+following is Robert M. Flight's
+[blog post](http://rmflight.github.io/posts/2014/07/vignetteAnalysis.html)
+about using vignettes to document the process of creating a package.
+
+**I DIDN'T USE `devtools::check` YESTERDAY. IT'S AWESOME.**
+
+Don't use `@examples` in internal functions!
+
+*AHA!* This [e-book](http://r-pkgs.had.co.nz) is out-of-date because they broke
+`devtools` into sub-packages for DRY reasons. The `usethis` package (which
+is now a dependency of `devtools` is now the namespace for some of the
+functions. [This site](https://www.tidyverse.org/blog/2018/10/devtools-2-0-0/)
+has details.
+
+There are a lot of problems in getting Rmarkdown to work. The markdown renderer
+libraries `pandoc` **AND** `pandoc-citeproc` need to be installed. Also, some
+stage of the renderer tries to work with EMACS temporary files and crashes, so
+you can't have unsaved changes to any of the vignette markdown files. Maybe
+this is a feature, not a bug??
+
+## Linting
+
+I can't seem to get the `devtools::lint` to listen to my customizations. This
+does work, though:
+```{r linting}
+my.linters <- lintr::with_defaults(
+  object_name_linter=lintr::object_name_linter(styles="dotted.case"),
+  infix_spaces_linter=NULL,
+  commented_code_linter=NULL
+)
+lintr::lint_package(linters=my.linters)
+```
+My code style will depart from Wickham's in three ways:
+
+1. Dotted case names are *de rigeur* b/c ESS shortcuts undercore to assignment
+
+2. I will use Python code style for spaces around infix operators.
+
+3. Sometimes I have commented code as I work. I don't need to be reminded.
