@@ -23,7 +23,7 @@ build.term <- function(index, phase, variable.name="a") {
         variable <- paste(variable.name, index, sep="")
         result <- paste(variable,
                         " * cos(",
-                        index - 1, " * u(x) ",
+                        index - 1, " * w ",
                         ifelse(phase < 0, "-", "+"), " ",
                         abs(phase),
                         ")", sep="")
@@ -35,40 +35,21 @@ build.term <- function(index, phase, variable.name="a") {
     return(result)
 }
 
-
-#' A formula that describes a Finite Fourier Fit
+#' A list of Fourier basis terms in the requested order
 #'
 #' See \code{\link{build.term}} for the details of how each term is built.
 #'
-#' @param response A string or expression that will be the lhs. of the formula.
 #' @param indices.to.use Which terms of the DFT to use in the formula.
 #' @param all.phases Every phase from the DFT.
 #' Elements are chosen with \code{indices.to.use}.
-#' @return a formula that represents a Finite Fourier Basis.
+#' @return a list of terms representing part of a Finite Fourier Basis.
 #' @examples
-#' build.formula("y - mu", 1:4, rnorm(10) %% pi)
+#' build.term.list(1:4, rnorm(10) %% pi)
 #' @export
-build.formula <- function(response, indices.to.use, all.phases) {
+build.term.list <- function(indices.to.use, all.phases) {
     terms <- list()
     for (i in indices.to.use) {
         terms <- append(terms, build.term(i, all.phases[i]))
     }
-    return(as.formula(paste(response,
-                            "~",
-                            paste(terms, collapse=" + "))))
-}
-
-
-build.starts <- function(term.order, term.var, variable.name="a") {
-    n <- paste(variable.name, term.order, sep="")
-    v <- as.list(term.var[term.order])
-    names(v) <- n
-    return(v)
-}
-
-#' @importFrom stats BIC as.formula
-best.fit <- function(fit.list) {
-    v <- sapply(fit.list, BIC)
-    i <- argmin(v)
-    return(c(index=i, BIC=v[i]))
+    return(terms)
 }

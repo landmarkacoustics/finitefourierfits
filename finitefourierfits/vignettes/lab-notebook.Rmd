@@ -52,11 +52,11 @@ and a power of two.
    1. the r.h.s is built from the DFT's terms
    
       1. if the CF term is included, just add a term called `b`.
-	  
-	  1. if term `i` is included, add `a{i} * cos({i-1} * u(x) + {p[i]})`
-	  
-	     1. if `i=3` & `p[3] =-1.1` then the term is `a3 * cos(2 * u(x) - 1.1)`
-		 
+      
+      1. if term `i` is included, add `a{i} * cos({i-1} * u(x) + {p[i]})`
+      
+         1. if `i=3` & `p[3] =-1.1` then the term is `a3 * cos(2 * u(x) - 1.1)`
+         
    1. it turned out that the phases didn't change much when I let them vary,
    so I decided to set them as constants. This may cause problems with
    numerical precision because they are actually pasted into the formulae.
@@ -65,6 +65,54 @@ and a power of two.
 
 1. the resulting function is the approximation.
 
+Here's what it looked like after I plugged away for a while. Bonus: I won't get
+annoying messages about commented code after I put it here!
+
+```{r}
+x <- seq(-2, 2, length.out=401)
+N <- length(x)
+fft.size <- 4 * nextn(N, 2)
+half <- floor(fft.size / 2)
+omegas <- finitefourierfits::omegas(fft.size)
+b <- x[1]
+Hz <- (N-1)/(x[N]-b)
+d.omega <- (fft.size-1)/omegas[fft.size]
+m <- Hz / d.omega
+u <- function(x) {m*(x-b)}
+plot(x, u(x), las=1, pch=16, col='blue',
+     xlab=expression(x), ylab=expression(u(x)))
+y <- (x-rnorm(1))*(x-rnorm(1))*(x-rnorm(1))
+mu <- mean(y)
+S <- fft(c(y - mu, rep(0, fft.size-N)))
+a <- finitefourierfits::.amplitudes(S)
+p <- finitefourierfits::.phases(S)
+mag.order <- order(a, decreasing=TRUE)[1:10]
+all.terms <- build.term.list(mag.order, p)
+all.starts <- a[mag.order]
+names(all.starts) <- names(all.terms)
+all.starts
+step.fits <- list()
+for(i in 1:10) {
+    ix <- 1:i
+    tmp <- tryCatch(nls(formula(paste("y-mu ~",
+                                      paste(all.terms[ix], collapse=" + "))),
+                        data.frame(w=u(x), y=y),
+                        start=all.starts[ix]),
+                    error=function(e) NULL)
+    if(!is.null(tmp)){
+        step.fits <- append(step.fits, list(tmp))
+    }
+}
+if (length(step.fits)) {
+    scores <- sapply(step.fits, BIC)
+    tops <- match(min(scores), scores)
+    plot(x, y,
+	     las=1, col="blue",
+		 xlab=expression(x), ylab=expression(f(x)))
+    lines(x, predict(step.fits[[tops]])+mu, col="orange", lwd=2)
+	summary(step.fits[[tops]])
+}
+```
 
 # 2020 July 16
 
@@ -81,6 +129,8 @@ well.
 
 
 # 2020 July 17
+
+## Getting vignettes to work
 
 Today is when I actually started writing this vignette. One guide that I am
 following is Robert M. Flight's
@@ -107,7 +157,7 @@ this is a feature, not a bug??
 
 I can't seem to get the `devtools::lint` to listen to my customizations. This
 does work, though:
-```{r linting}
+```{r eval=FALSE}
 my.linters <- lintr::with_defaults(
   object_name_linter=lintr::object_name_linter(styles="dotted.case"),
   infix_spaces_linter=NULL,
@@ -119,6 +169,37 @@ My code style will depart from Wickham's in three ways:
 
 1. Dotted case names are *de rigeur* b/c ESS shortcuts undercore to assignment
 
-2. I will use Python code style for spaces around infix operators.
+1. I will use Python code style for spaces around infix operators.
 
-3. Sometimes I have commented code as I work. I don't need to be reminded.
+1. Sometimes I have commented code as I work. I don't need to be reminded.
+
+## Actually developing the package
+
+Now that I have a workflow up and running, I need to keep working on the code.
+Today's goal is to implement a more object-oriented interface to creating the
+fits. I need to encapsulate the steps because my goal is an interface like:
+```{r eval=FALSE}
+my.fit <- ff.fit(my.data$x, my.data$y, model.selector=BIC)
+my.fit$n.terms
+coef(my.fit)
+```
+My initial attempts at a monolithic function were not wildly successful. In
+particular, it is hard to debug. This is one of the problems with R, though.
+Pass-by-value means that there are nasty performance consequences to breaking
+an algorithm into component steps. I'm going to make it an object at some
+point, anyway, but it feels weird to break up what is essentially an ctor
+into steps.
+
+One quick gotcha is that tryCatch hides errors. I shouldn't activate it until
+I am ***SURE*** that everything eles works.
+
+I think I got it working:
+
+```{r}
+x <- seq(-2, 2, length.out=401)
+y <- 10*(x/2)^2 + rnorm(length(x))
+tmp <- finitefourierfits::ff.fit(x, y)
+summary(tmp$model)
+plot(x, y, las=1, col='blue', pch=16, xlab=expression(x), ylab=expression(f(x)))
+lines(x, predict(tmp$model), col='orange', lwd=2)
+```

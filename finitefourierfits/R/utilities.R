@@ -6,7 +6,7 @@
 #'
 #' @param x Some collection, probably a \code{\link{vector}} of some kind.
 #' @return the index of the smallest item in the collection.
-argmin <- function(x) {
+.argmin <- function(x) {
     return(match(min(x), x))
 }
 
@@ -22,4 +22,28 @@ argmin <- function(x) {
 #' @export
 omegas <- function(fft.size) {
     return(2 * pi * seq(0, fft.size - 1) / fft.size)
+}
+
+
+.tau <- 2*pi
+
+
+.domain.shift <- function(fft.size, domain.variable) {
+    Hz <- 1 / mean(diff(domain.variable))
+    d.omega <- fft.size / .tau
+    m <- Hz / d.omega
+    b <- domain.variable[1]
+    return(function(x) {
+        m * (x - b)
+    })
+}
+
+
+.somehow.get.the.name.of.y <- function(variable) {
+    return("y")
+}
+
+
+.null.on.error <- function(e) {
+    return(NULL)
 }

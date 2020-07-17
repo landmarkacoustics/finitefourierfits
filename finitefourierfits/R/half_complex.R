@@ -12,13 +12,15 @@ half.fft <- function(fft.size) {
 }
 
 
-amplitudes <- function(z) {
+#' @export
+.amplitudes <- function(z) {
     fft.size <- length(z)
     ix <- half.fft(fft.size)
     return(c(Re(z[1]) + Re(z[ix+1]), 2*Mod(z[2:ix])) / fft.size)
 }
 
 
-phases <- function(z) {
+#' @export
+.phases <- function(z) {
     return(Arg(z[1:half.fft(length(z))]))
 }
