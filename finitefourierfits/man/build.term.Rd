@@ -27,8 +27,6 @@ build.term(42, 2.71828)
 }
 \seealso{
 \code{\link{fft}} for calculating a DFT
-
 \code{\link{Arg}} for calculating the phase of an item in DFT
-
 \code{\link{as.formula}} for using the output to build a formula
 }

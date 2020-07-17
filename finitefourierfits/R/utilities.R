@@ -8,12 +8,19 @@
 #' @return the index of the smallest item in the collection.
 #' @examples
 #' argmin(seq(-1, 10, 10)^2)
-argmin <- function(x){
+argmin <- function(x) {
     return(match(min(x), x))
 }
 
-
-frequencies <- function(fft.size){
-    return( 2*pi*seq(0, fft.size-1)/fft.size )
+#' Angular frequencies for a Discrete Fourier Transform
+#'
+#' If there are \code{fft.size} samples in the DFT then the frequencies run
+#' from 0 (inclusive) to \eqn{2\pi} (exclusive).
+#'
+#' @param fft.size The size of the DFT
+#' @return a vector of floats of length \code{fft.size} in \eqn{[0, 2\pi)}.
+#' @examples
+#' frequencies(4)
+frequencies <- function(fft.size) {
+    return(2 * pi * seq(0, fft.size - 1) / fft.size)
 }
-

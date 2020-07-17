@@ -22,7 +22,7 @@ NULL
 ## Hz <- (N-1)/(x[N]-b)
 ## d.omega <- (fft.size-1)/omegas[fft.size]
 ## m <- Hz / d.omega
-## u <- function(x){m*(x-b)}
+## u <- function(x) {m*(x-b)}
 ## y <- (x-rnorm(1))*(x-rnorm(1))*(x-rnorm(1))
 ## mu <- mean(y)
 ## S <- fft(c(y - mu, rep(0, fft.size-N)))
@@ -30,7 +30,7 @@ NULL
 ## p <- phases(S)
 ## mag.order <- order(a, decreasing=TRUE)
 ## step.fits <- list()
-## for(i in 1:10){
+## for(i in 1:10) {
 ##     ix <- mag.order[1:i]
 ##     step.fits[[i]] <- tryCatch(nls(build.formula("y-mu",
 ##                                                  build.rhs.list(ix,

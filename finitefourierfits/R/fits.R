@@ -15,19 +15,18 @@
 #' build.term(42, 2.71828)
 #' @seealso
 #' \code{\link{fft}} for calculating a DFT
-#' 
 #' \code{\link{Arg}} for calculating the phase of an item in DFT
-#' 
 #' \code{\link{as.formula}} for using the output to build a formula
-build.term <- function(index, phase, variable.name='a'){
-    if(index>1){
-        variable <- paste(variable.name, index, sep='')
+#' @export
+build.term <- function(index, phase, variable.name="a") {
+    if (index>1) {
+        variable <- paste(variable.name, index, sep="")
         result <- paste(variable,
                         " * cos(",
                         index - 1, " * u(x) ",
-                        ifelse(phase < 0, '-', '+'), ' ',
+                        ifelse(phase < 0, "-", "+"), " ",
                         abs(phase),
-                        ')', sep='')
+                        ")", sep="")
     }
     else{
         variable <- result <- "b"
@@ -37,33 +36,38 @@ build.term <- function(index, phase, variable.name='a'){
 }
 
 
-build.rhs.list <- function(indices.to.use, all.phases){
+#' A formula that describes a Finite Fourier Fit
+#'
+#' See \code{\link{build.terms}} for the details of how each term is built.
+#'
+#' @param response A string or expression that will be the lhs. of the formula.
+#' @param indices.to.use Which terms of the DFT to use in the formula.
+#' @param all.phases Every phase from the DFT.
+#' Elements are chosen with \code{indices.to.use}.
+#' @return a formula that represents a Finite Fourier Basis.
+#' @examples
+#' build.formula("y - mu", 1:4, rnorm(10) %% pi)
+build.formula <- function(response, indices.to.use, all.phases) {
     terms <- list()
-    for(i in indices.to.use){
+    for (i in indices.to.use) {
         terms <- append(terms, build.term(i, all.phases[i]))
     }
-    return(terms)
-}
-
-
-build.formula <- function(response, rhs.list){
     return(as.formula(paste(response,
                             "~",
-                            paste(rhs.list, collapse=" + "))))
+                            paste(terms, collapse=" + "))))
 }
 
 
-build.starts <- function(term.order, term.var, variable.name='a'){
-    n <- paste(variable.name, term.order, sep='')
+build.starts <- function(term.order, term.var, variable.name="a") {
+    n <- paste(variable.name, term.order, sep="")
     v <- as.list(term.var[term.order])
     names(v) <- n
     return(v)
 }
 
 
-best.fit <- function(fit.list){
+best.fit <- function(fit.list) {
     v <- sapply(fit.list, BIC)
     i <- argmin(v)
     return(c(index=i, BIC=v[i]))
 }
-
