@@ -4,12 +4,14 @@
 \alias{predict.fffit}
 \title{Predicting from Finite Fourier Fits}
 \usage{
-\method{predict}{fffit}(object, newdata, ...)
+\method{predict}{fffit}(object, newdata = NULL, index = NULL, ...)
 }
 \arguments{
 \item{object}{An \code{fffit} object}
 
 \item{newdata}{A data frame with new independent and dependent variables.}
+
+\item{index}{optional, a specific model to summarize}
 
 \item{...}{Additional arguments to \code{predict.nls}}
 }
@@ -22,5 +24,5 @@ in the context of the \code{newdata}. This will give nonsensical results if the
 input domain is not within the bounds of the original analysis's domain.
 }
 \seealso{
-\code{\link{predict.nls}}
+\verb{\link{predict.nls}}
 }

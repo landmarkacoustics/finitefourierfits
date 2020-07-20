@@ -61,7 +61,7 @@ fffit <- function(x, y, model.selector=BIC, max.terms=10) {
                    starts=start.list,
                    dft=S,
                    models=models,
-                   selection.scores=best.model.index,
+                   selection.scores=scores,
                    best.index=best.model.index)
 
     class(result) <- append(class(result), "fffit")
@@ -98,12 +98,10 @@ fffit <- function(x, y, model.selector=BIC, max.terms=10) {
 
 
 .find.independent.variable <- function(data) {
-    return(data$x)
-}
-
-
-.find.dependent.variable <- function(data) {
-    return(data$y)
+    if (is.list(data)) {
+        return(data$x)
+    }
+    return(data)    
 }
 
 
@@ -114,6 +112,7 @@ fffit <- function(x, y, model.selector=BIC, max.terms=10) {
     return(c(index=i, BIC=v[i]))
 }
 
+
 #' Predicting from Finite Fourier Fits
 #'
 #' `predict.fffit` produces predicted values, obtained by evaluating the fit
@@ -122,14 +121,94 @@ fffit <- function(x, y, model.selector=BIC, max.terms=10) {
 #'
 #' @param object An `fffit` object
 #' @param newdata A data frame with new independent and dependent variables.
+#' @param index optional, a specific model to summarize
 #' @param ... Additional arguments to `predict.nls`
 #' @return A numeric vector of predictions
-#' @seealso \code{\link{predict.nls}}
-#' @importFrom stats predict
+#' @seealso `\link{predict.nls}`
+#' @importFrom stats predict fitted
 #' @export
-predict.fffit <- function(object, newdata, ...) {
+predict.fffit <- function(object, newdata=NULL, index=NULL, ...) {
+    if (is.null(index)) {
+        index <- object$best.index
+    }
+    mo <- object$models[[index]]
+    if (is.null(newdata)) {
+        return(fitted(mo))
+    }
     x <- .find.independent.variable(newdata)
-    y <- .find.dependent.variable(newdata)
-    return(predict(object$models[[object$best.model.index]],
-                   .to.data(object$u, x, y), ...))
+    return(predict(mo, data.frame(w=object$u(x))))
+}
+
+
+#' Comparing the Quality of the Possible Fits
+#'
+#' `anova.fffit` prints an ANOVA table of all of the models that the fit made.
+#'
+#' @param object An fffit object
+#' @param ... optional, additional arguments to anova. DON'T USE
+#' @return an anova object
+#' @seealso `\link{anova}`, `\link{nls}`
+#' @importFrom stats anova
+#' @export
+anova.fffit <- function(object, ...) {
+    if (length(list(...))) {
+        stop("don't pass any ellipsis arguments to anova.fffit")
+    }
+    do.call(anova, c(object$models))
+}
+
+
+#' Demonstrating the Quality of the Best Fit
+#'
+#' `summary.fffit` prints an summary table of the model that fit best.
+#'
+#' @param object An fffit object
+#' @param index optional, a specific model to summarize
+#' @param ... optional, additional arguments to `\link{summary}`
+#' @return a summary object
+#' @seealso `\link{summary}`, `\link{nls}`
+#' @export
+summary.fffit <- function(object, index=NULL, ...) {
+    if (is.null(index)) {
+        index <- object$best.index
+    }
+    summary(object$models[[index]], ...)
+}
+
+
+#' The Coefficients of the Best Fit
+#'
+#' `coef.fffit` returns the coefficients of the best-fit model
+#'
+#' @param object An fffit object
+#' @param index optional, a specific model to extract coefficients from.
+#' @param ... optional, additional arguments to `\link{coef}`
+#' @return a vector of coefficients
+#' @seealso `\link{coef}`, `\link{nls}`
+#' @importFrom stats coef
+#' @export
+coef.fffit <- function(object, index=NULL, ...) {
+    if (is.null(index)) {
+        index <- object$best.index
+    }
+    coef(object$models[[index]], ...)
+}
+
+
+#' The Formula of the Best Fit
+#'
+#' `formula.fffit` returns the formula of the best-fit model
+#'
+#' @param x An fffit object
+#' @param index optional, a specific model to get the formula for
+#' @param ... optional, additional arguments to `\link{formula}`
+#' @return a formula
+#' @seealso `\link{formula}`, `\link{nls}`
+#' @importFrom stats formula
+#' @export
+formula.fffit <- function(x, index=NULL, ...) {
+    if (is.null(index)) {
+        index <- x$best.index
+    }
+    formula(x$models[[index]], ...)
 }

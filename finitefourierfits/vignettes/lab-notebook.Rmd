@@ -199,9 +199,9 @@ I think I got it working:
 x <- seq(-2, 2, length.out=401)
 y <- 10*(x/2)^2 + rnorm(length(x))
 tmp <- finitefourierfits::fffit(x, y)
-summary(tmp$model)
+summary(tmp)
 plot(x, y, las=1, col='blue', pch=16, xlab=expression(x), ylab=expression(f(x)))
-lines(x, predict(tmp$model), col='orange', lwd=2)
+lines(x, predict(tmp), col='orange', lwd=2)
 ```
 
 # 2020 July 20
@@ -213,10 +213,18 @@ save all of the fits that work and the index of the best fit.
 The functions that I want to define for this
 
 predict
-~ Really for interpolation in this context
+~ Predicted values for some new data from the best (or a specified) model, or
+the fitted values from the best (or specified) model.
 
-plot
-~ Draw a scatter plot with the data and a fit through it
+~~plot~~
+~ Draw a scatter plot with the data and a fit through it. This is actually too
+hard to do right now.
+
+coef
+~ The coefficients of the best model, or optionally an indexed fit
+
+formula
+~ The formula of the best model, or optionally an indexed fit
 
 summary
 ~ Summarize the best fit, or optionally an indexed fit
