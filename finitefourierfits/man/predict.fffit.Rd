@@ -4,12 +4,14 @@
 \alias{predict.fffit}
 \title{Predicting from Finite Fourier Fits}
 \usage{
-\method{predict}{fffit}(fit, newdata, ...)
+\method{predict}{fffit}(object, newdata, ...)
 }
 \arguments{
-\item{fit}{An \code{fffit} object}
+\item{object}{An \code{fffit} object}
 
-\item{newdata}{A new independent variable.}
+\item{newdata}{A data frame with new independent and dependent variables.}
+
+\item{...}{Additional arguments to \code{predict.nls}}
 }
 \value{
 A numeric vector of predictions

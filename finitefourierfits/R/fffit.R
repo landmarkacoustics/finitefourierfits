@@ -53,13 +53,16 @@ fffit <- function(x, y, model.selector=BIC, max.terms=10) {
             models <- append(models, list(tmp))
         }
     }
-    best.model.index <- .argmin(sapply(models, model.selector))
+    scores <- sapply(models, model.selector)
+    best.model.index <- .argmin(scores)
     result <- list(response=lhs,
                    u=u,
                    terms=term.list,
                    starts=start.list,
                    dft=S,
-                   model=models[[best.model.index]])
+                   models=models,
+                   selection.scores=best.model.index,
+                   best.index=best.model.index)
 
     class(result) <- append(class(result), "fffit")
 
@@ -117,13 +120,16 @@ fffit <- function(x, y, model.selector=BIC, max.terms=10) {
 #' in the context of the `newdata`. This will give nonsensical results if the
 #' input domain is not within the bounds of the original analysis's domain.
 #'
-#' @param fit An `fffit` object
-#' @param newdata A new independent variable.
+#' @param object An `fffit` object
+#' @param newdata A data frame with new independent and dependent variables.
+#' @param ... Additional arguments to `predict.nls`
 #' @return A numeric vector of predictions
 #' @seealso \code{\link{predict.nls}}
+#' @importFrom stats predict
 #' @export
-predict.fffit <- function(fit, newdata, ...) {
+predict.fffit <- function(object, newdata, ...) {
     x <- .find.independent.variable(newdata)
     y <- .find.dependent.variable(newdata)
-    return(predict(fit$model, .to.data(fit$u, x, y)))
+    return(predict(object$models[[object$best.model.index]],
+                   .to.data(object$u, x, y), ...))
 }
