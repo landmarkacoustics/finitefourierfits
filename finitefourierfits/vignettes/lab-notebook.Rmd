@@ -179,7 +179,7 @@ Now that I have a workflow up and running, I need to keep working on the code.
 Today's goal is to implement a more object-oriented interface to creating the
 fits. I need to encapsulate the steps because my goal is an interface like:
 ```{r eval=FALSE}
-my.fit <- ff.fit(my.data$x, my.data$y, model.selector=BIC)
+my.fit <- fffit(my.data$x, my.data$y, model.selector=BIC)
 my.fit$n.terms
 coef(my.fit)
 ```
@@ -198,8 +198,33 @@ I think I got it working:
 ```{r}
 x <- seq(-2, 2, length.out=401)
 y <- 10*(x/2)^2 + rnorm(length(x))
-tmp <- finitefourierfits::ff.fit(x, y)
+tmp <- finitefourierfits::fffit(x, y)
 summary(tmp$model)
 plot(x, y, las=1, col='blue', pch=16, xlab=expression(x), ylab=expression(f(x)))
 lines(x, predict(tmp$model), col='orange', lwd=2)
 ```
+
+# 2020 July 20
+
+The next step is to turn this stuff into an S3 object interface. Initially,
+I thought that I wanted to just save the best fit, but now I think I want to
+save all of the fits that work and the index of the best fit.
+
+The functions that I want to define for this
+
+predict
+~ Really for interpolation in this context
+
+plot
+~ Draw a scatter plot with the data and a fit through it
+
+summary
+~ Summarize the best fit, or optionally an indexed fit
+
+anova
+~ compare all of the fits in order of degrees of freedom and likelihood
+
+### side note about configuring `lintr`
+You can avoid re-creating `my.linters` every time you lint with a  `.linter`
+configuration file in the project directory. It irritates `devtools::check`,
+though.

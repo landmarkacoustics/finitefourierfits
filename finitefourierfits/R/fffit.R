@@ -15,10 +15,10 @@
 #' @examples
 #' x <- rnorm(10)
 #' y <- 10*x + rnorm(10)
-#' my.fit <- ff.fit(x, y)
+#' my.fit <- fffit(x, y)
 #' @export
 #' @importFrom stats BIC fft nextn nls
-ff.fit <- function(x, y, model.selector=BIC, max.terms=10) {
+fffit <- function(x, y, model.selector=BIC, max.terms=10) {
 
     N <- length(x)
     if (length(y) != N) {
@@ -46,8 +46,7 @@ ff.fit <- function(x, y, model.selector=BIC, max.terms=10) {
     for (i in 1:max.terms) {
         tmp <- tryCatch(.build.model(lhs,
                                      term.list[1:i],
-                                     data.frame(w=u(x),
-                                                y=y),
+                                     .to.data(u, x, y),
                                      start.list[1:i]),
                         error=.null.on.error)
         if (!is.null(tmp)) {
@@ -55,12 +54,16 @@ ff.fit <- function(x, y, model.selector=BIC, max.terms=10) {
         }
     }
     best.model.index <- .argmin(sapply(models, model.selector))
-    return(list(response=lhs,
-                u=u,
-                terms=term.list,
-                starts=start.list,
-                dft=S,
-                model=models[[best.model.index]]))
+    result <- list(response=lhs,
+                   u=u,
+                   terms=term.list,
+                   starts=start.list,
+                   dft=S,
+                   model=models[[best.model.index]])
+
+    class(result) <- append(class(result), "fffit")
+
+    invisible(result)
 }
 
 
@@ -83,9 +86,44 @@ ff.fit <- function(x, y, model.selector=BIC, max.terms=10) {
 }
 
 
+.to.data <- function(transformation,
+                     independent.variable,
+                     dependent.variable) {
+    return(data.frame(w=transformation(independent.variable),
+                      y=dependent.variable))
+}
+
+
+.find.independent.variable <- function(data) {
+    return(data$x)
+}
+
+
+.find.dependent.variable <- function(data) {
+    return(data$y)
+}
+
+
 #' @importFrom stats BIC
 .best.fit <- function(fit.list) {
     v <- sapply(fit.list, BIC)
     i <- .argmin(v)
     return(c(index=i, BIC=v[i]))
+}
+
+#' Predicting from Finite Fourier Fits
+#'
+#' `predict.fffit` produces predicted values, obtained by evaluating the fit
+#' in the context of the `newdata`. This will give nonsensical results if the
+#' input domain is not within the bounds of the original analysis's domain.
+#'
+#' @param fit An `fffit` object
+#' @param newdata A new independent variable.
+#' @return A numeric vector of predictions
+#' @seealso \code{\link{predict.nls}}
+#' @export
+predict.fffit <- function(fit, newdata, ...) {
+    x <- .find.independent.variable(newdata)
+    y <- .find.dependent.variable(newdata)
+    return(predict(fit$model, .to.data(fit$u, x, y)))
 }

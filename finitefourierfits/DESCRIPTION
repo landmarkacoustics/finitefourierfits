@@ -23,5 +23,5 @@ Collate:
     'utilities.R'
     'terms.R'
     'half_complex.R'
-	'ff_fit.R'
+	'fffit.R'
 VignetteBuilder: knitr

@@ -1,0 +1,4 @@
+linters: lintr::with_defaults(
+  object_name_linter=lintr::object_name_linter(styles="dotted.case"),
+  infix_spaces_linter=NULL,
+  commented_code_linter=NULL)
