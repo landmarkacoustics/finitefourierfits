@@ -20,13 +20,6 @@ test_that("omegas works", {
 })
 
 
-test_that("finding the name of `y` works", {
-    expect_equal(.somehow.get.the.name.of.y(pi), "y")
-    expect_equal(.somehow.get.the.name.of.y("y"), "y")
-    expect_equal(.somehow.get.the.name.of.y(NULL), "y")
-})
-
-
 test_that("`.null.on.error` `is.null`", {
     expect_identical(.null.on.error(), NULL)
 })
@@ -37,12 +30,17 @@ u <- .domain.shift(400, x)
 
 
 test_that("domain shift has the right slope", {
-    expect_equal(mean(diff(u(x))), .tau/400)
+    expect_equal(u$slope, 2*pi*100/400)
+})
+
+
+test_that("domain shift has the right intercept", {
+    expect_equal(u$intercept, 0.0)
 })
 
 
 test_that("domain shift maps correctly", {
-    expect_equal(u(0), 0)
-    expect_equal(u(0.5), pi/4)
-    expect_equal(u(1), pi/2)
+    expect_equal(u$FUN(0), 0)
+    expect_equal(u$FUN(0.5), pi/4)
+    expect_equal(u$FUN(1), pi/2)
 })

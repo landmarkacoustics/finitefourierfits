@@ -36,17 +36,15 @@ fffit <- function(x, y, model.selector=BIC, max.terms=10) {
 
     magnitude.order <- order(a, decreasing=TRUE)[1:max.terms]
 
-    lhs <- .somehow.get.the.name.of.y(y)
-
     term.list <- build.term.list(magnitude.order, p)
     start.list <- as.list(a[magnitude.order])
     names(start.list) <- names(term.list)
 
     models <- list()
     for (i in 1:max.terms) {
-        tmp <- tryCatch(.build.model(lhs,
+        tmp <- tryCatch(.build.model("y",
                                      term.list[1:i],
-                                     .to.data(u, x, y),
+                                     .to.data(u$FUN, x, y),
                                      start.list[1:i]),
                         error=.null.on.error)
         if (!is.null(tmp)) {
@@ -55,11 +53,10 @@ fffit <- function(x, y, model.selector=BIC, max.terms=10) {
     }
     scores <- sapply(models, model.selector)
     best.model.index <- .argmin(scores)
-    result <- list(response=lhs,
-                   u=u,
-                   terms=term.list,
-                   starts=start.list,
+    result <- list(u=u,
                    dft=S,
+                   magnitude.order=magnitude.order,
+                   terms=term.list,
                    models=models,
                    selection.scores=scores,
                    best.index=best.model.index)
@@ -67,49 +64,6 @@ fffit <- function(x, y, model.selector=BIC, max.terms=10) {
     class(result) <- append(class(result), "fffit")
 
     invisible(result)
-}
-
-
-#' A formula that describes a Finite Fourier Fit
-#'
-#' See \code{\link{build.term}} for the details of how each term is built.
-#'
-#' @param response A string or expression that will be the lhs of the formula.
-#' @param term.list The terms for the rhs of the formula.
-#' @param data The data frame to predict on
-#' @param starts The starting values for the \code{\link{nls}} fit.
-#' @return an \code{nls} object that represents a Finite Fourier Basis.
-#' @importFrom stats as.formula
-.build.model <- function(response, term.list, data, starts) {
-    return(nls(as.formula(paste(response,
-                                "~",
-                                paste(term.list, collapse=" + "))),
-               data=data,
-               start=starts))
-}
-
-
-.to.data <- function(transformation,
-                     independent.variable,
-                     dependent.variable) {
-    return(data.frame(w=transformation(independent.variable),
-                      y=dependent.variable))
-}
-
-
-.find.independent.variable <- function(data) {
-    if (is.list(data)) {
-        return(data$x)
-    }
-    return(data)    
-}
-
-
-#' @importFrom stats BIC
-.best.fit <- function(fit.list) {
-    v <- sapply(fit.list, BIC)
-    i <- .argmin(v)
-    return(c(index=i, BIC=v[i]))
 }
 
 
@@ -136,7 +90,7 @@ predict.fffit <- function(object, newdata=NULL, index=NULL, ...) {
         return(fitted(mo))
     }
     x <- .find.independent.variable(newdata)
-    return(predict(mo, data.frame(w=object$u(x))))
+    return(predict(mo, data.frame(w=object$u$FUN(x))))
 }
 
 

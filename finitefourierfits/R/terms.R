@@ -47,9 +47,41 @@ build.term <- function(index, phase, variable.name="a") {
 #' build.term.list(1:4, rnorm(10) %% pi)
 #' @export
 build.term.list <- function(indices.to.use, all.phases) {
-    terms <- list()
-    for (i in indices.to.use) {
-        terms <- append(terms, build.term(i, all.phases[i]))
+    return(as.list(sapply(indices.to.use,
+                          function(i) build.term(i, all.phases[i]))))
+}
+
+
+#' A formula that describes a Finite Fourier Fit
+#'
+#' See \code{\link{build.term}} for the details of how each term is built.
+#'
+#' @param response A string or expression that will be the lhs of the formula.
+#' @param term.list The terms for the rhs of the formula.
+#' @param data The data frame to predict on
+#' @param starts The starting values for the \code{\link{nls}} fit.
+#' @return an \code{nls} object that represents a Finite Fourier Basis.
+#' @importFrom stats as.formula
+.build.model <- function(response, term.list, data, starts) {
+    return(nls(as.formula(paste(response,
+                                "~",
+                                paste(term.list, collapse=" + "))),
+               data=data,
+               start=starts))
+}
+
+
+.to.data <- function(transformation,
+                     independent.variable,
+                     dependent.variable) {
+    return(data.frame(w=transformation(independent.variable),
+                      y=dependent.variable))
+}
+
+
+.find.independent.variable <- function(data) {
+    if (is.list(data)) {
+        return(data$x)
     }
-    return(terms)
+    return(data)   
 }

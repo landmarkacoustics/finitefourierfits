@@ -25,22 +25,16 @@ omegas <- function(fft.size) {
 }
 
 
-.tau <- 2*pi
-
-
 .domain.shift <- function(fft.size, domain.variable) {
     Hz <- 1 / mean(diff(domain.variable))
-    d.omega <- fft.size / .tau
-    m <- Hz / d.omega
-    b <- domain.variable[1]
-    return(function(x) {
+    m <- 2 * pi * Hz / fft.size
+    b <- domain.variable[1] * m
+    return(list(
+        slope=m,
+        intercept=b,
+        FUN=function(x) {
         m * (x - b)
-    })
-}
-
-
-.somehow.get.the.name.of.y <- function(variable) {
-    return("y")
+    }))
 }
 
 

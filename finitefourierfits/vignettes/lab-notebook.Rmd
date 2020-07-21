@@ -18,6 +18,7 @@ knitr::opts_chunk$set(
 
 ```{r setup}
 library(finitefourierfits)
+set.seed(42)
 ```
 # 2020 July 13-15
 
@@ -68,7 +69,7 @@ and a power of two.
 Here's what it looked like after I plugged away for a while. Bonus: I won't get
 annoying messages about commented code after I put it here!
 
-```{r, fig.dim=c(5, 5), out.width="80%"}
+```{r, fig.dim=c(5, 5), out.width="95%"}
 x <- seq(-2, 2, length.out=401)
 N <- length(x)
 fft.size <- 4 * nextn(N, 2)
@@ -195,7 +196,7 @@ I am ***SURE*** that everything eles works.
 
 I think I got it working:
 
-```{r, fig.dim=c(6, 6), out.width="80%"}
+```{r, fig.dim=c(6, 6), out.width="95%"}
 x <- seq(-2, 2, length.out=401)
 y <- 10*(x/2)^2 + rnorm(length(x))
 tmp <- finitefourierfits::fffit(x, y)
@@ -245,8 +246,7 @@ __MAKE SURE THAT `R` is up to date__
 I'm going to see if the parameters of the fits actually match the parameters
 of input functions that are sums of cosines.
 
-```{r, fig.dim=c(6, 6), out.width="80%"}
-set.seed(42)
+```{r, fig.dim=c(6, 6), out.width="95%"}
 x <- seq(-2, 2, length.out=401)
 f <- function(x, a=c(1, 1), b=c(0, 1)){
   a[1]*cos(a[2]*2*pi*x) + b[1]*cos(b[2]*2*pi*x)
@@ -277,3 +277,21 @@ summary(zfit)
 
 The fits are pretty amazing, but it's hard to tell what the actual function
 of x is that it represents! That's something to work on tomorrow, for totes.
+
+# 2020 July 21
+
+## What are the actual parameters that I'm trying to capture?
+
+My previous attempts have involved transforming the original predictor variable
+into angular frequency in radians. I was calling the linear transformation 'u'.
+I also assigned a lot of variables as constants, especially the phases.
+
+Noodling around with the results of my first analyses showed that the fits are
+good, but the coefficients that I found weren't useful. Basically, I was
+creating fits of the form $y = \sum_i{a_{i} \cos((i-1)u(x) + p_{i}})$, where
+$u(x) = 2\pi x N_s / K$, where $N_s$ is the sample size, $K$ is the FFT size,
+and $i$ is the index of a term in the DFT.
+
+What I really want is $y = \sum_i{a_{i} \cos(2 \pi f_i x + p_i)}$. I should
+have the DFT inform my _inital estimates_ for the coefficients, **not**
+constants.
