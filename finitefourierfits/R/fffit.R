@@ -25,7 +25,7 @@ fffit <- function(x, y, model.selector=BIC, max.terms=10) {
         stop("`x` and `y` must be the same length.")
     }
 
-    fft.size <- 4*nextn(N, 2)
+    fft.size <- padded.fft.size(N)
 
     u <- .domain.shift(fft.size, x)
 
