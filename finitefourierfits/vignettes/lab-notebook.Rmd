@@ -68,7 +68,7 @@ and a power of two.
 Here's what it looked like after I plugged away for a while. Bonus: I won't get
 annoying messages about commented code after I put it here!
 
-```{r}
+```{r, fig.dim=c(5, 5), out.width="80%"}
 x <- seq(-2, 2, length.out=401)
 N <- length(x)
 fft.size <- 4 * nextn(N, 2)
@@ -79,7 +79,7 @@ Hz <- (N-1)/(x[N]-b)
 d.omega <- (fft.size-1)/omegas[fft.size]
 m <- Hz / d.omega
 u <- function(x) {m*(x-b)}
-plot(x, u(x), las=1, pch=16, col='blue',
+plot(x, u(x), las=1, pch=16, col="blue",
      xlab=expression(x), ylab=expression(u(x)))
 y <- (x-rnorm(1))*(x-rnorm(1))*(x-rnorm(1))
 mu <- mean(y)
@@ -195,13 +195,13 @@ I am ***SURE*** that everything eles works.
 
 I think I got it working:
 
-```{r}
+```{r, fig.dim=c(6, 6), out.width="80%"}
 x <- seq(-2, 2, length.out=401)
 y <- 10*(x/2)^2 + rnorm(length(x))
 tmp <- finitefourierfits::fffit(x, y)
 summary(tmp)
-plot(x, y, las=1, col='blue', pch=16, xlab=expression(x), ylab=expression(f(x)))
-lines(x, predict(tmp), col='orange', lwd=2)
+plot(x, y, las=1, col="blue", pch=16, xlab=expression(x), ylab=expression(f(x)))
+lines(x, predict(tmp), col="orange", lwd=2)
 ```
 
 # 2020 July 20
@@ -236,3 +236,44 @@ anova
 You can avoid re-creating `my.linters` every time you lint with a  `.linter`
 configuration file in the project directory. It irritates `devtools::check`,
 though.
+
+## installing on a Windows machine
+__MAKE SURE THAT `R` is up to date__
+
+## More checking
+
+I'm going to see if the parameters of the fits actually match the parameters
+of input functions that are sums of cosines.
+
+```{r, fig.dim=c(6, 6), out.width="80%"}
+set.seed(42)
+x <- seq(-2, 2, length.out=401)
+f <- function(x, a=c(1, 1), b=c(0, 1)){
+  a[1]*cos(a[2]*2*pi*x) + b[1]*cos(b[2]*2*pi*x)
+}
+phi <- c(0.6, 0.25)
+y <- 5*f(x) + rnorm(length(x))
+yfit <- fffit(x, y)
+z <- 5*f(x, c(1, phi[1]), c(1, phi[2])) + rnorm(length(x))
+zfit <- fffit(x, z)
+plot(x, y,
+     las=1,
+     ylim=10*c(-1, 2),
+     xlab=expression(x), ylab=expression(f(x)),
+     pch=1, col="blue")
+points(x, z,
+      pch=1, col="orange")
+lines(x, predict(yfit), col="blue", lwd=2)
+lines(x, predict(zfit), col="orange", lwd=2)
+legend("topright",
+       c(expression(cos(2*pi*x)),
+         bquote(cos(.(2*phi[1])*pi*x) + cos(.(2*phi[2])*pi*x))),
+       pch=1,
+       lty=1,
+       col=c("blue", "orange"))
+summary(yfit)
+summary(zfit)
+```
+
+The fits are pretty amazing, but it's hard to tell what the actual function
+of x is that it represents! That's something to work on tomorrow, for totes.
