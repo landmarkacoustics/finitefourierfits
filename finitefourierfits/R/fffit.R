@@ -25,27 +25,16 @@ fffit <- function(x, y, model.selector=BIC, max.terms=10) {
         stop("`x` and `y` must be the same length.")
     }
 
-    fft.size <- padded.fft.size(N)
-
-    u <- .domain.shift(fft.size, x)
-
-    S <- fft(c(y, rep(0, fft.size - N)))
-
-    a <- .amplitudes(S)
-    p <- .phases(S)
-
-    magnitude.order <- order(a, decreasing=TRUE)[1:max.terms]
-
-    term.list <- build.term.list(magnitude.order, p)
-    start.list <- as.list(a[magnitude.order])
-    names(start.list) <- names(term.list)
-
+    transform <- fourier.transform(y)
+    
+    term.list <- lapply(seq_len(max.terms), fffterm, transform)
+    
     models <- list()
     for (i in 1:max.terms) {
-        tmp <- tryCatch(.build.model("y",
-                                     term.list[1:i],
-                                     .to.data(u$FUN, x, y),
-                                     start.list[1:i]),
+        these.terms <- term.list[seq_len(i)]
+        tmp <- tryCatch(nls(.build.formula("y", these.terms),
+                            .to.data(u$FUN, x, y),
+                            .build.starts(these.terms)),
                         error=.null.on.error)
         if (!is.null(tmp)) {
             models <- append(models, list(tmp))
@@ -78,7 +67,7 @@ fffit <- function(x, y, model.selector=BIC, max.terms=10) {
 #' @param index optional, a specific model to summarize
 #' @param ... Additional arguments to `predict.nls`
 #' @return A numeric vector of predictions
-#' @seealso `\link{predict.nls}`
+#' @seealso [`predict.nls`]
 #' @importFrom stats predict fitted
 #' @export
 predict.fffit <- function(object, newdata=NULL, index=NULL, ...) {
@@ -101,7 +90,7 @@ predict.fffit <- function(object, newdata=NULL, index=NULL, ...) {
 #' @param object An fffit object
 #' @param ... optional, additional arguments to anova. DON'T USE
 #' @return an anova object
-#' @seealso `\link{anova}`, `\link{nls}`
+#' @seealso [anova()], [nls()]
 #' @importFrom stats anova
 #' @export
 anova.fffit <- function(object, ...) {
@@ -118,9 +107,9 @@ anova.fffit <- function(object, ...) {
 #'
 #' @param object An fffit object
 #' @param index optional, a specific model to summarize
-#' @param ... optional, additional arguments to `\link{summary}`
+#' @param ... optional, additional arguments to [summary()]
 #' @return a summary object
-#' @seealso `\link{summary}`, `\link{nls}`
+#' @seealso [summary()], [nls()]
 #' @export
 summary.fffit <- function(object, index=NULL, ...) {
     if (is.null(index)) {
@@ -136,9 +125,9 @@ summary.fffit <- function(object, index=NULL, ...) {
 #'
 #' @param object An fffit object
 #' @param index optional, a specific model to extract coefficients from.
-#' @param ... optional, additional arguments to `\link{coef}`
+#' @param ... optional, additional arguments to [coef()]
 #' @return a vector of coefficients
-#' @seealso `\link{coef}`, `\link{nls}`
+#' @seealso [coef()], [nls()]
 #' @importFrom stats coef
 #' @export
 coef.fffit <- function(object, index=NULL, ...) {
@@ -155,9 +144,9 @@ coef.fffit <- function(object, index=NULL, ...) {
 #'
 #' @param x An fffit object
 #' @param index optional, a specific model to get the formula for
-#' @param ... optional, additional arguments to `\link{formula}`
+#' @param ... optional, additional arguments to [formula()]
 #' @return a formula
-#' @seealso `\link{formula}`, `\link{nls}`
+#' @seealso [formula()], [nls()]
 #' @importFrom stats formula
 #' @export
 formula.fffit <- function(x, index=NULL, ...) {
@@ -166,3 +155,20 @@ formula.fffit <- function(x, index=NULL, ...) {
     }
     formula(x$models[[index]], ...)
 }
+
+
+.to.data <- function(independent.variable,
+                     dependent.variable) {
+    return(data.frame(x=independent.variable,
+                      y=dependent.variable))
+}
+
+
+.find.independent.variable <- function(data) {
+    if (is.list(data)) {
+        return(data$x)
+    }
+    return(data)
+}
+
+

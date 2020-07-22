@@ -11,7 +11,7 @@
 
 \item{index}{optional, a specific model to extract coefficients from.}
 
-\item{...}{optional, additional arguments to \verb{\link{coef}}}
+\item{...}{optional, additional arguments to \code{\link[=coef]{coef()}}}
 }
 \value{
 a vector of coefficients
@@ -20,5 +20,5 @@ a vector of coefficients
 \code{coef.fffit} returns the coefficients of the best-fit model
 }
 \seealso{
-\verb{\link{coef}}, \verb{\link{nls}}
+\code{\link[=coef]{coef()}}, \code{\link[=nls]{nls()}}
 }

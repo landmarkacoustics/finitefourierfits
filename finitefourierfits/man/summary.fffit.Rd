@@ -11,7 +11,7 @@
 
 \item{index}{optional, a specific model to summarize}
 
-\item{...}{optional, additional arguments to \verb{\link{summary}}}
+\item{...}{optional, additional arguments to \code{\link[=summary]{summary()}}}
 }
 \value{
 a summary object
@@ -20,5 +20,5 @@ a summary object
 \code{summary.fffit} prints an summary table of the model that fit best.
 }
 \seealso{
-\verb{\link{summary}}, \verb{\link{nls}}
+\code{\link[=summary]{summary()}}, \code{\link[=nls]{nls()}}
 }

@@ -24,5 +24,5 @@ in the context of the \code{newdata}. This will give nonsensical results if the
 input domain is not within the bounds of the original analysis's domain.
 }
 \seealso{
-\verb{\link{predict.nls}}
+\code{\link{predict.nls}}
 }

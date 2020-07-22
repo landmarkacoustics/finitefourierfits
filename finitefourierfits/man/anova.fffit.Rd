@@ -18,5 +18,5 @@ an anova object
 \code{anova.fffit} prints an ANOVA table of all of the models that the fit made.
 }
 \seealso{
-\verb{\link{anova}}, \verb{\link{nls}}
+\code{\link[=anova]{anova()}}, \code{\link[=nls]{nls()}}
 }

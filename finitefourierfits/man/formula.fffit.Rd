@@ -11,7 +11,7 @@
 
 \item{index}{optional, a specific model to get the formula for}
 
-\item{...}{optional, additional arguments to \verb{\link{formula}}}
+\item{...}{optional, additional arguments to \code{\link[=formula]{formula()}}}
 }
 \value{
 a formula
@@ -20,5 +20,5 @@ a formula
 \code{formula.fffit} returns the formula of the best-fit model
 }
 \seealso{
-\verb{\link{formula}}, \verb{\link{nls}}
+\code{\link[=formula]{formula()}}, \code{\link[=nls]{nls()}}
 }

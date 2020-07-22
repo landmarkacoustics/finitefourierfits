@@ -2,9 +2,9 @@
 
 #' The index of the minimum element in a container
 #'
-#' \code{argmin} acts just like the mathematical concept it is named after.
+#' `argmin` acts just like the mathematical concept it is named after.
 #'
-#' @param x Some collection, probably a \code{\link{vector}} of some kind.
+#' @param x Some collection, probably a [vector()] of some kind.
 #' @return the index of the smallest item in the collection.
 .argmin <- function(x) {
     return(match(min(x), x))
@@ -12,11 +12,11 @@
 
 #' Angular frequencies for a Discrete Fourier Transform
 #'
-#' If there are \code{fft.size} samples in the DFT then the frequencies run
-#' from 0 (inclusive) to \eqn{2\pi} (exclusive).
+#' If there are `fft.size` samples in the DFT then the frequencies run
+#' from 0 (inclusive) to $2\pi$ (exclusive).
 #'
 #' @param fft.size The size of the DFT
-#' @return a vector of floats of length \code{fft.size} in \eqn{[0, 2\pi)}.
+#' @return a vector of floats of length `fft.size` in $[0, 2\pi)$.
 #' @examples
 #' omegas(4)
 #' @export

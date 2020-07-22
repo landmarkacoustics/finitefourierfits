@@ -7,7 +7,7 @@
 .argmin(x)
 }
 \arguments{
-\item{x}{Some collection, probably a \code{\link{vector}} of some kind.}
+\item{x}{Some collection, probably a \code{\link[=vector]{vector()}} of some kind.}
 }
 \value{
 the index of the smallest item in the collection.

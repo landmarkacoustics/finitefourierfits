@@ -295,3 +295,9 @@ and $i$ is the index of a term in the DFT.
 What I really want is $y = \sum_i{a_{i} \cos(2 \pi f_i x + p_i)}$. I should
 have the DFT inform my _inital estimates_ for the coefficients, **not**
 constants.
+
+# 2020 July 22
+
+I made progress yesterday on changing how the results are structured and
+reported. It's definitely headed toward a more object-oriented approach, and
+that's going to be much better.

@@ -10,9 +10,9 @@ half.fft(fft.size)
 \item{fft.size}{The length of the Discrete Fourier Transform window.}
 }
 \value{
-An integer equal to half of \code{fft.size}, rounded down.
+An integer equal to half of 'fft.size`, rounded down.
 }
 \description{
 \code{half.fft} returns the pivot index between the positive and negative
-frequencies in the output of \code{\link{fft}}.
+frequencies in the output of \code{\link[=fft]{fft()}}.
 }
