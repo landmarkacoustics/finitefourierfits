@@ -10,13 +10,21 @@
     return(match(min(x), x))
 }
 
+
+.find.local.peaks <- function(x) {
+    lhd <- diff(c(0, x))
+    rhd <- diff(c(x, 0))
+    return(seq_along(x)[lhd>0 & rhd<0])
+}
+
+
 #' Angular frequencies for a Discrete Fourier Transform
 #'
 #' If there are `fft.size` samples in the DFT then the frequencies run
-#' from 0 (inclusive) to $2\pi$ (exclusive).
+#' from 0 (inclusive) to $2pi$ (exclusive).
 #'
 #' @param fft.size The size of the DFT
-#' @return a vector of floats of length `fft.size` in $[0, 2\pi)$.
+#' @return a vector of floats of length `fft.size` in $[0, 2pi)$.
 #' @examples
 #' omegas(4)
 #' @export
@@ -40,4 +48,24 @@ omegas <- function(fft.size) {
 
 .null.on.error <- function(e) {
     return(NULL)
+}
+
+
+.na.on.error <- function(e) {
+    return(NA)
+}
+
+
+.to.data <- function(independent.variable,
+                     dependent.variable) {
+    return(data.frame(x=independent.variable,
+                      y=dependent.variable))
+}
+
+
+.find.independent.variable <- function(data) {
+    if (is.list(data)) {
+        return(data$x)
+    }
+    return(data)
 }

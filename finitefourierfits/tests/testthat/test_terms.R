@@ -5,9 +5,9 @@ library(finitefourierfits)
 
 test_that("the string version of a term is a fully parameterized cosine", {
     expect_equal(.trig.term(3),
-                 "a3*cos(2*pi*f3*x + p3)")
+                 "a3*cos(2*pi*f3*x - p3)")
     expect_equal(.trig.term(42),
-                 "a42*cos(2*pi*f42*x + p42)")
+                 "a42*cos(2*pi*f42*x - p42)")
 })
 
 
@@ -26,7 +26,7 @@ x <- seq(0, fft.size-1)/Hz
 df <- Hz / fft.size
 phi <- 5 * df
 
-DFT <- fourier.transform(cos(2*pi * phi * x), Hz, 1)
+DFT <- fourier.summary(cos(2*pi * phi * x) + 0.1, Hz, 1)
 
 test_that("the DFT fixture is set up as expected", {
     expect_equal(DFT$fft.size, fft.size)
@@ -39,7 +39,7 @@ test_that("frequency estimates are correct", {
 
     for (i in seq_along(efs)) {
         expect_equal(as.numeric(efs[i]),
-                     df*(DFT$magnitude.order[i]-1))
+                     df * (DFT$magnitude.order[i]-1))
         expect_equal(names(efs)[i], paste("f", i, sep=""))
     }
 })
@@ -51,14 +51,16 @@ test_that("the biggest term builds correctly", {
     lapply(list("a", "f", "p"), function(n) {
         expect_equal(term[[n]], .named.item(DFT[[n]][6], n, 1))
     })
-    expect_equal(term$term, "a1*cos(2*pi*f1*x + p1)")
+    expect_equal(term$term, "a1*cos(2*pi*f1*x - p1)")
 })
 
 
 test_that("the zero-frequency term builds correctly", {
     one <- match(1, DFT$magnitude.order)
     term <- fffterm(one, DFT)
-    lapply(list("f", "p"), function(n) { expect_true(is.na(term[[n]])) })
+    lapply(list("f", "p"), function(n) {
+        expect_true(is.na(term[[n]]))
+    })
     expect_equal(term$a, .named.item(DFT$a[one], "b", ""))
 })
 
@@ -69,7 +71,7 @@ test_that("the second biggest term builds correctly", {
     lapply(list("a", "f", "p"), function(n) {
         expect_equal(term[[n]], .named.item(DFT[[n]][5], n, 2))
     })
-    expect_equal(term$term, "a2*cos(2*pi*f2*x + p2)")
+    expect_equal(term$term, "a2*cos(2*pi*f2*x - p2)")
 })
 
 
@@ -87,9 +89,9 @@ term.list <- lapply(term.ranks, fffterm, DFT)
 
 test_that("the formula builds correctly", {
     expect_equal(.build.formula("y", term.list),
-                 formula(y ~ a1*cos(2*pi*f1*x + p1) +
-                             a2*cos(2*pi*f2*x + p2) +
-                             a3*cos(2*pi*f3*x + p3) +
+                 formula(y ~ a1*cos(2*pi*f1*x - p1) +
+                             a2*cos(2*pi*f2*x - p2) +
+                             a3*cos(2*pi*f3*x - p3) +
                              b))
 })
 
@@ -98,7 +100,7 @@ a.starts <- .concatenate.starts("a", term.list)
 test_that("a concatenates correctly", {
     expect_equal(class(a.starts), "list")
     expect_equal(names(a.starts), c("a1", "a2", "a3", "b"))
-    for(i in seq_along(a.starts)){
+    for (i in seq_along(a.starts)) {
         expect_equal(a.starts[[i]],
                      with(DFT, a[magnitude.order[term.ranks[i]]]))
     }
@@ -109,7 +111,7 @@ f.starts <- .concatenate.starts("f", term.list)
 test_that("f concatenates correctly", {
     expect_equal(class(f.starts), "list")
     expect_equal(names(f.starts), c("f1", "f2", "f3"))
-    for(i in seq_along(f.starts)){
+    for (i in seq_along(f.starts)) {
         expect_equal(f.starts[[i]],
                      with(DFT, f[magnitude.order[term.ranks[i]]]))
     }
@@ -120,7 +122,7 @@ p.starts <- .concatenate.starts("p", term.list)
 test_that("p concatenates correctly", {
     expect_equal(class(p.starts), "list")
     expect_equal(names(p.starts), c("p1", "p2", "p3"))
-    for(i in seq_along(p.starts)){
+    for (i in seq_along(p.starts)) {
         expect_equal(p.starts[[i]],
                      with(DFT, p[magnitude.order[term.ranks[i]]]))
     }

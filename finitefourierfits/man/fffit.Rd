@@ -4,7 +4,7 @@
 \alias{fffit}
 \title{Fit a small, Fourier basis-like model to data}
 \usage{
-fffit(x, y, model.selector = BIC, max.terms = 10)
+fffit(x, y, model.selector = BIC, max.terms = 10, pad.multiplier = 2)
 }
 \arguments{
 \item{x}{Numeric, the independent variable}
@@ -14,6 +14,8 @@ fffit(x, y, model.selector = BIC, max.terms = 10)
 \item{model.selector}{Function, optional, the function for comparing models}
 
 \item{max.terms}{Integer, optional, the greatest number of terms allowed}
+
+\item{pad.multiplier}{Integer, optional, how much zero-padding to add}
 }
 \value{
 an FFFit model

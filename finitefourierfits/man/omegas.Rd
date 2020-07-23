@@ -10,11 +10,11 @@ omegas(fft.size)
 \item{fft.size}{The size of the DFT}
 }
 \value{
-a vector of floats of length \code{fft.size} in $[0, 2\pi)$.
+a vector of floats of length \code{fft.size} in $[0, 2pi)$.
 }
 \description{
 If there are \code{fft.size} samples in the DFT then the frequencies run
-from 0 (inclusive) to $2\pi$ (exclusive).
+from 0 (inclusive) to $2pi$ (exclusive).
 }
 \examples{
 omegas(4)

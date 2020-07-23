@@ -4,12 +4,12 @@
 \alias{fffterm}
 \title{Summarize a DFT Term for Use in an FFFit}
 \usage{
-fffterm(obj, ranking)
+fffterm(ranking, obj)
 }
 \arguments{
-\item{obj}{A \code{\link[=fourier.transform]{fourier.transform()}} object.}
+\item{ranking}{An integer representing where the term falls in some ordering}
 
-\item{ranking}{An integer representing where the term falls in some ordering
+\item{obj}{A \code{\link[=fourier.summary]{fourier.summary()}} object.
 of the terms of the DFT.}
 }
 \value{
@@ -24,12 +24,12 @@ f
 ~ The frequency of the term
 
 term
-~ A string with format $a\link{n}\cos(2 \pi f\link{n} x + p\link{n})$ for ranking \code{n}.
+~ A string with format $a\link{n}cos(2 pi f\link{n} x + p\link{n})$ for ranking \code{n}.
 }
 \description{
 Several pieces of information from each term go in to building an \code{\link[=fffit]{fffit()}},
 and it makes sense to calculate and store them once.
 }
 \seealso{
-\code{\link[=fourier.transform]{fourier.transform()}}
+\code{\link[=fourier.summary]{fourier.summary()}}
 }

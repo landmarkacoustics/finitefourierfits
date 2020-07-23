@@ -1,7 +1,7 @@
 ## Copyright (C) 2020 by Landmark Acoustics LLC
 
-.trig.term <- function(i){
-    return(paste("a", i, "*cos(2*pi*f", i, "*x + p", i, ")", sep=""))
+.trig.term <- function(i) {
+    return(paste("a", i, "*cos(2*pi*f", i, "*x - p", i, ")", sep=""))
 }
 
 
@@ -25,7 +25,7 @@
 #' and it makes sense to calculate and store them once.
 #'
 #' @param ranking An integer representing where the term falls in some ordering
-#' @param obj A [fourier.transform()] object.
+#' @param obj A [fourier.summary()] object.
 #' of the terms of the DFT.
 #' @return an object of type `fffterm`, which has the following named members:
 #' a
@@ -38,9 +38,9 @@
 #' ~ The frequency of the term
 #'
 #' term
-#' ~ A string with format $a[n]\cos(2 \pi f[n] x + p[n])$ for ranking `n`.
+#' ~ A string with format $a[n]cos(2 pi f[n] x + p[n])$ for ranking `n`.
 #'
-#' @seealso [fourier.transform()]
+#' @seealso [fourier.summary()]
 #' @export
 fffterm <- function(ranking, obj) {
 

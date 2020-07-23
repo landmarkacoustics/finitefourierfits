@@ -21,7 +21,7 @@ Suggests:
 Collate: 
     'finitefourierfits.R'
     'utilities.R'
+    'fourier_summary.R'
     'terms.R'
-    'half_complex.R'
 	'fffit.R'
 VignetteBuilder: knitr

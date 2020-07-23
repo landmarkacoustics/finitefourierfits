@@ -20,22 +20,34 @@ half.fft <- function(fft.size) {
 }
 
 
+.tau <- 2 * pi
+
+.unwrap <- function(phase) {
+    return((phase + pi)%%.tau - pi)
+}
+
+
 #' @export
 .phases <- function(z) {
-    return(Arg(z[1:half.fft(length(z))]))
+    return(.unwrap(Arg(z[1:half.fft(length(z))])))
+}
+
+
+.sample.rate <- function(x) {
+    return(1 / mean(diff(x)))
 }
 
 
 #' Compute a DFT, and Some Helpful Summaries and Descriptors
 #'
-#' `fourier.transform` zero-pads `x`, calculates the normal real to half-complex
+#' `fourier.summary` zero-pads `x`, calculates the normal real to half-complex
 #' DFT of the padded vector, and then stores the amplitudes and phases, and
 #' amplitude rank of the non-negative frequency terms.
 #'
 #' @param x A numeric vector to be Fourier transformed
 #' @param sample.rate The sample rate of the time series underlying `x`.
 #' @param multiplier optional, controls how much padding `x` gets.
-#' @return an S3 object of class `fourier.transform` with the following names:
+#' @return an S3 object of class `fourier.summary` with the following names:
 #'
 #' dft
 #' ~ The complex-valued [dft()] of x after it has been right-padded with zeros.
@@ -51,7 +63,7 @@ half.fft <- function(fft.size) {
 #'
 #' f
 #' ~ Frequencies in \[0, Nyquist\)
-#' 
+#'
 #' p
 #' ~ The real-valued phases of each non-negative frequency term.
 #'
@@ -60,16 +72,18 @@ half.fft <- function(fft.size) {
 #'
 #' @seealso [dft()], [.amplitudes()], [.phases()], [half.fft()]
 #' @export
-fourier.transform <- function(x, sample.rate, multiplier=4L) {
+fourier.summary <- function(x, sample.rate, multiplier=4L) {
     N <- length(x)
     fft.size <- multiplier * nextn(N, 2)
     result <- list(dft=fft(c(x, rep(0, fft.size - N))),
                    fft.size=fft.size,
                    sample.rate=sample.rate)
     result$a <- .amplitudes(result$dft)
-    result$f <- 0:(half.fft(fft.size) - 1)*(sample.rate/fft.size)
+    result$f <- 0:(half.fft(fft.size) - 1) * (sample.rate/fft.size)
     result$p <- .phases(result$dft)
-    result$magnitude.order <- order(result$a, decreasing=TRUE)
-    class(result) <- append(class(result), "fourier.transform")
+    peaks <- .find.local.peaks(result$a)
+    peak.order <- order(result$a[peaks], decreasing=TRUE)
+    result$magnitude.order <- peaks[peak.order]
+    class(result) <- append(class(result), "fourier.summary")
     return(result)
 }

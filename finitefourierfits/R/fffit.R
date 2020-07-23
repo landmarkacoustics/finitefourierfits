@@ -11,6 +11,7 @@
 #' @param y Numeric, the dependent variable
 #' @param model.selector Function, optional, the function for comparing models
 #' @param max.terms Integer, optional, the greatest number of terms allowed
+#' @param pad.multiplier Integer, optional, how much zero-padding to add
 #' @return an FFFit model
 #' @examples
 #' x <- rnorm(10)
@@ -18,33 +19,42 @@
 #' my.fit <- fffit(x, y)
 #' @export
 #' @importFrom stats BIC fft nextn nls
-fffit <- function(x, y, model.selector=BIC, max.terms=10) {
+fffit <- function(x, y,
+                  model.selector=BIC,
+                  max.terms=10,
+                  pad.multiplier=2) {
 
     N <- length(x)
     if (length(y) != N) {
         stop("`x` and `y` must be the same length.")
     }
 
-    transform <- fourier.transform(y)
-    
+    transform <- fourier.summary(y, .sample.rate(x), pad.multiplier)
+
     term.list <- lapply(seq_len(max.terms), fffterm, transform)
-    
-    models <- list()
-    for (i in 1:max.terms) {
-        these.terms <- term.list[seq_len(i)]
-        tmp <- tryCatch(nls(.build.formula("y", these.terms),
-                            .to.data(u$FUN, x, y),
-                            .build.starts(these.terms)),
-                        error=.null.on.error)
-        if (!is.null(tmp)) {
-            models <- append(models, list(tmp))
-        }
-    }
+
+    datums <- .to.data(x, y)
+
+    models <- lapply(seq_along(term.list),
+                     function(i) {
+                         these.terms <- term.list[seq_len(i)]
+                         tryCatch(nls(.build.formula("y", these.terms),
+                                      datums,
+                                      .build.starts(these.terms)),
+                                  error=.na.on.error)
+                     })
+    models <- models[!is.na(models)]
+
+    fallback.models <- list(lm(y ~ 1, datums),
+                            lm(y ~ x, datums))
+
+    models <- c(fallback.models, models)
+
     scores <- sapply(models, model.selector)
+
     best.model.index <- .argmin(scores)
-    result <- list(u=u,
-                   dft=S,
-                   magnitude.order=magnitude.order,
+
+    result <- list(dft=transform,
                    terms=term.list,
                    models=models,
                    selection.scores=scores,
@@ -155,20 +165,3 @@ formula.fffit <- function(x, index=NULL, ...) {
     }
     formula(x$models[[index]], ...)
 }
-
-
-.to.data <- function(independent.variable,
-                     dependent.variable) {
-    return(data.frame(x=independent.variable,
-                      y=dependent.variable))
-}
-
-
-.find.independent.variable <- function(data) {
-    if (is.list(data)) {
-        return(data$x)
-    }
-    return(data)
-}
-
-

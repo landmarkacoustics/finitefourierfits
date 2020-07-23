@@ -69,7 +69,7 @@ and a power of two.
 Here's what it looked like after I plugged away for a while. Bonus: I won't get
 annoying messages about commented code after I put it here!
 
-```{r, fig.dim=c(5, 5), out.width="95%"}
+```{r, eval=FALSE, fig.dim=c(5, 5), out.width="95%"}
 x <- seq(-2, 2, length.out=401)
 N <- length(x)
 fft.size <- 4 * nextn(N, 2)
@@ -301,3 +301,59 @@ constants.
 I made progress yesterday on changing how the results are structured and
 reported. It's definitely headed toward a more object-oriented approach, and
 that's going to be much better.
+
+Today I refactored term construction using test-driven development and it was
+very satisfying and productive. The REPEATED interruptions from the family were
+easier to deal with because I could pick up at the unit test that wasn't
+working.
+
+### Weak typing in R
+
+Usually, I prefer to use `NULL` as my marker for "the default behavior didn't
+happen, but that's OK because there's an anticipated alternative procedure."
+That did NOT work today when in the `fffterm` constructor. I was trying to
+convert vectors with `name` attributes to lists with items whose names come
+from that attribute. R could handle that when the vector contained no `NULL`s,
+but not when they were present.
+
+# 2020 July 23
+
+The beginning of the day plan is to keep up with the test-driven development. I
+should be on `fffit` now!
+
+## Constraining the phase of the estimate
+
+It turns out to be useful to use set the initial phase guesses as the arguments
+modulo pi of the complex values of the DFT. In R, $-kn mod n = k$. As a
+consequence, if we don't do this then the sign of the amplitude of a cosine
+term can get flipped when the phase is negative. Constraining the phases to be
+positive seems to have beneficial effects. We'll see if that's true with
+negative phase inputs. It probably won't!
+
+It didn't. __BUT__, the problem was that my formulas were __ALL__ wrong: they
+should have been $a cos(2 pi x - p)$ rather than $a cos(2 pi x + p)$.
+
+A little phase unwrapping is in order. The unwrap function I chose was
+
+```{r}
+unwrap <- function(phases) {
+    return((phases + pi) % (2*pi) - pi)
+}
+```
+
+That's useful for constraining initial parameter estimates.
+
+## Fallback models
+
+I added two fallback models to each fit: a linear model with just an intercept
+term, and one with a slope and intercept.
+
+## Peak finding
+
+It has become increasingly clear that the sorted amplitudes alone won't work as
+the criteria for choosing the elements of the basis. If an input frequency is
+between two bins of the DFT then both of those bins will have high energy. We
+don't actually want to include to adjacent frequencies in the model. The `nls`
+part will find the match. We want to move on to the next peak. As a result, I
+am incorporating a simple local peak matcher so that the "magnitude order" is
+an ordering of local peaks, not all amplitudes.
