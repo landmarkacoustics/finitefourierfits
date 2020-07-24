@@ -44,7 +44,7 @@ test_that("the whole fourier.summary thing works", {
     expect_equal(ft$a, a)
     expect_equal(ft$f, seq(0, 3/8, 1/8))
     expect_equal(ft$p, p)
-    expect_equal(ft$magnitude.order, 3)
+    expect_equal(ft$magnitude.order, c(3, 1, 2, 4))
 })
 
 

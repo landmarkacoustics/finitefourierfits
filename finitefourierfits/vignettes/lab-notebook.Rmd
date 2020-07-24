@@ -337,7 +337,7 @@ A little phase unwrapping is in order. The unwrap function I chose was
 
 ```{r}
 unwrap <- function(phases) {
-    return((phases + pi) % (2*pi) - pi)
+    return((phases + pi) %% (2*pi) - pi)
 }
 ```
 
@@ -357,3 +357,14 @@ don't actually want to include to adjacent frequencies in the model. The `nls`
 part will find the match. We want to move on to the next peak. As a result, I
 am incorporating a simple local peak matcher so that the "magnitude order" is
 an ordering of local peaks, not all amplitudes.
+
+# 2020 July 24
+
+I think that today's project is to change how I build the models. I had hoped
+that `nls` was smart enough to just tweak the hints from the DFT to fit the
+cosine basis functions to the output function. Unfortunately, it seems prone to
+hitting beats and harmonics just as often as the underlying signals. Therefore,
+I think that I am going to build up the models step by step by applying each
+successive term to the residuals from the previously accepted terms. The issue
+then becomes determining criteria for including terms. The first thing that I
+am going to try is a delta criterion approach.

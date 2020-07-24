@@ -11,10 +11,11 @@
 }
 
 
-.find.local.peaks <- function(x) {
-    lhd <- diff(c(0, x))
-    rhd <- diff(c(x, 0))
-    return(seq_along(x)[lhd>0 & rhd<0])
+.find.local.peaks <- function(x, threshold.quantile=0.5) {
+    lhd <- diff(c(-Inf, x))
+    rhd <- diff(c(x, -Inf))
+    f <- lhd > 0 & rhd < 0
+    return(seq_along(x)[f])
 }
 
 

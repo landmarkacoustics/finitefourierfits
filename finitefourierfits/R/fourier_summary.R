@@ -29,7 +29,7 @@ half.fft <- function(fft.size) {
 
 #' @export
 .phases <- function(z) {
-    return(.unwrap(Arg(z[1:half.fft(length(z))])))
+    return(Arg(z[1:half.fft(length(z))]))
 }
 
 
@@ -50,7 +50,7 @@ half.fft <- function(fft.size) {
 #' @return an S3 object of class `fourier.summary` with the following names:
 #'
 #' dft
-#' ~ The complex-valued [dft()] of x after it has been right-padded with zeros.
+#' ~ The complex-valued [fft()] of x after it has been right-padded with zeros.
 #'
 #' fft.size
 #' ~ The length of `dft`
@@ -70,7 +70,7 @@ half.fft <- function(fft.size) {
 #' magnitude.order
 #' ~ Indices into `a` that sort it from largest to smallest.
 #'
-#' @seealso [dft()], [.amplitudes()], [.phases()], [half.fft()]
+#' @seealso [fft()], [half.fft()]
 #' @export
 fourier.summary <- function(x, sample.rate, multiplier=4L) {
     N <- length(x)
@@ -82,8 +82,9 @@ fourier.summary <- function(x, sample.rate, multiplier=4L) {
     result$f <- 0:(half.fft(fft.size) - 1) * (sample.rate/fft.size)
     result$p <- .phases(result$dft)
     peaks <- .find.local.peaks(result$a)
-    peak.order <- order(result$a[peaks], decreasing=TRUE)
-    result$magnitude.order <- peaks[peak.order]
+    peak.order <- order(result$a, decreasing=TRUE)
+    peak.part <- peak.order %in% peaks
+    result$magnitude.order <- c(peak.order[peak.part], peak.order[!peak.part])
     class(result) <- append(class(result), "fourier.summary")
     return(result)
 }

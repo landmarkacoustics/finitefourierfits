@@ -24,7 +24,7 @@ f
 ~ The frequency of the term
 
 term
-~ A string with format $a\link{n}cos(2 pi f\link{n} x + p\link{n})$ for ranking \code{n}.
+~ A string with format $a[n]cos(2 pi f[n] x + p[n])$ for ranking \code{n}.
 }
 \description{
 Several pieces of information from each term go in to building an \code{\link[=fffit]{fffit()}},

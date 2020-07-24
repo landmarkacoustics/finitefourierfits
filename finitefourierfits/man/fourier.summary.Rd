@@ -43,5 +43,5 @@ DFT of the padded vector, and then stores the amplitudes and phases, and
 amplitude rank of the non-negative frequency terms.
 }
 \seealso{
-\code{\link[=dft]{dft()}}, \code{\link[=.amplitudes]{.amplitudes()}}, \code{\link[=.phases]{.phases()}}, \code{\link[=half.fft]{half.fft()}}
+\code{\link[=fft]{fft()}}, \code{\link[=half.fft]{half.fft()}}
 }

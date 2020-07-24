@@ -38,7 +38,7 @@
 #' ~ The frequency of the term
 #'
 #' term
-#' ~ A string with format $a[n]cos(2 pi f[n] x + p[n])$ for ranking `n`.
+#' ~ A string with format $a\[n\]cos(2 pi f\[n\] x + p\[n\])$ for ranking `n`.
 #'
 #' @seealso [fourier.summary()]
 #' @export
@@ -59,7 +59,7 @@ fffterm <- function(ranking, obj) {
                             f=.named.item(sample.rate * (ix - 1) / fft.size,
                                           "f", ranking),
                             p=.named.item(p[ix], "p", ranking),
-                            term=ifelse(ix == 1, "b", .trig.term(ranking))))
+                            term=.trig.term(ranking)))
     }
 
     class(result) <- append(class(result), "fffterm")

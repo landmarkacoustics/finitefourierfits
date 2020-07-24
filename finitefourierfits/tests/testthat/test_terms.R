@@ -26,7 +26,7 @@ x <- seq(0, fft.size-1)/Hz
 df <- Hz / fft.size
 phi <- 5 * df
 
-DFT <- fourier.summary(cos(2*pi * phi * x) + 0.1, Hz, 1)
+DFT <- fourier.summary(cos(2*pi * phi * x), Hz, 1)
 
 test_that("the DFT fixture is set up as expected", {
     expect_equal(DFT$fft.size, fft.size)
@@ -69,7 +69,7 @@ test_that("the second biggest term builds correctly", {
     term <- fffterm(2, DFT)
     expect_true("fffterm" %in% class(term))
     lapply(list("a", "f", "p"), function(n) {
-        expect_equal(term[[n]], .named.item(DFT[[n]][5], n, 2))
+        expect_equal(term[[n]], .named.item(DFT[[n]][233], n, 2))
     })
     expect_equal(term$term, "a2*cos(2*pi*f2*x - p2)")
 })

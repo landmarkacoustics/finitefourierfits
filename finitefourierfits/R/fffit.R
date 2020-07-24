@@ -18,7 +18,7 @@
 #' y <- 10*x + rnorm(10)
 #' my.fit <- fffit(x, y)
 #' @export
-#' @importFrom stats BIC fft nextn nls
+#' @importFrom stats BIC fft lm nextn nls
 fffit <- function(x, y,
                   model.selector=BIC,
                   max.terms=10,
