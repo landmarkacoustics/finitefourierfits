@@ -1,5 +1,8 @@
 ## Copyright (C) 2020 by Landmark Acoustics LLC
 
+.arg.names <- list(a="a", f="f", p="p")
+
+
 .trig.term <- function(i) {
     return(paste("a", i, "*cos(2*pi*f", i, "*x - p", i, ")", sep=""))
 }
@@ -46,21 +49,19 @@ fffterm <- function(ranking, obj) {
 
     ix <- obj$magnitude.order[ranking]
 
-    if (ix==1) {
-        result <- with(obj,
-                       list(a=.named.item(a[1], "b", ""),
-                            p=NA,
-                            f=NA,
-                            term="b"))
-    }
-    else {
-        result <- with(obj,
-                       list(a=.named.item(a[ix], "a", ranking),
-                            f=.named.item(sample.rate * (ix - 1) / fft.size,
-                                          "f", ranking),
-                            p=.named.item(p[ix], "p", ranking),
-                            term=.trig.term(ranking)))
-    }
+    result <- if (ix==1) {
+                  with(obj, list(a=.named.item(a[1], "b", ""),
+                                p=NA,
+                                f=NA,
+                                term="b"))
+              } else {
+                  c(
+                      lapply(.arg.names, function(n) {
+                          .named.item(obj[[n]][ix], n, ranking)
+                      }),
+                      list(term=.trig.term(ranking))
+                  )
+              }
 
     class(result) <- append(class(result), "fffterm")
 
@@ -86,7 +87,7 @@ fffterm <- function(ranking, obj) {
 
 
 .build.starts <- function(term.list) {
-    result <- sapply(c("a", "f", "p"),
+    result <- sapply(as.character(.arg.names),
                      .concatenate.starts,
                      term.list,
                      simplify=FALSE)

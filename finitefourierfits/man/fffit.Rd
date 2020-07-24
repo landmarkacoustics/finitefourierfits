@@ -4,7 +4,7 @@
 \alias{fffit}
 \title{Fit a small, Fourier basis-like model to data}
 \usage{
-fffit(x, y, model.selector = BIC, max.terms = 10, pad.multiplier = 2)
+fffit(x, y, model.selector = BIC, max.terms = 10, pad.multiplier = 4)
 }
 \arguments{
 \item{x}{Numeric, the independent variable}

@@ -113,8 +113,8 @@ test_that("An `fffit` matches a simple parabola", {
 test_that("Two cosine curves are fit by a 6-term `fffit`", {
     a <- 2*c(4, 3)
     f <- c(157, 921)
-    p <- c(-1, 2)
-    y <- a[1]*cos(.tau*x*f[1] + p[1]) + a[2]*cos(.tau*x*f[2] + p[2]) + rnorm(N)
+    p <- c(1, 2)
+    y <- a[1]*cos(.tau*x*f[1] - p[1]) + a[2]*cos(.tau*x*f[2] - p[2]) + rnorm(N)
 
     fit <- fffit(x, y)
 

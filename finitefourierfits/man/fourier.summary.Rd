@@ -17,7 +17,7 @@ fourier.summary(x, sample.rate, multiplier = 4L)
 an S3 object of class \code{fourier.summary} with the following names:
 
 dft
-~ The complex-valued \code{\link[=dft]{dft()}} of x after it has been right-padded with zeros.
+~ The complex-valued \code{\link[=fft]{fft()}} of x after it has been right-padded with zeros.
 
 fft.size
 ~ The length of \code{dft}

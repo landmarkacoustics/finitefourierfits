@@ -360,6 +360,8 @@ an ordering of local peaks, not all amplitudes.
 
 # 2020 July 24
 
+## Step-wise model building?
+### motivation
 I think that today's project is to change how I build the models. I had hoped
 that `nls` was smart enough to just tweak the hints from the DFT to fit the
 cosine basis functions to the output function. Unfortunately, it seems prone to
@@ -368,3 +370,13 @@ I think that I am going to build up the models step by step by applying each
 successive term to the residuals from the previously accepted terms. The issue
 then becomes determining criteria for including terms. The first thing that I
 am going to try is a delta criterion approach.
+
+### Nope! it was bugs!
+
+As always, the problem wasn't with R, it was with me. `nls` was doing its best,
+but I had reversed the signs of the phases when I was creating the "sum of two
+cosines" test data. No _WONDER_ the poor algorithm was confused. The last thing
+that remains as a slight tricky spot is that there are two ways that the sign
+of the amplitude terem may be reversed. It happens when the sign of the
+frequency term is reversed and when the phase is shifted by pi. I can live with
+those issues in real life.

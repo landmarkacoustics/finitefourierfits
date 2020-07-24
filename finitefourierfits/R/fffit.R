@@ -22,7 +22,7 @@
 fffit <- function(x, y,
                   model.selector=BIC,
                   max.terms=10,
-                  pad.multiplier=2) {
+                  pad.multiplier=4) {
 
     N <- length(x)
     if (length(y) != N) {
