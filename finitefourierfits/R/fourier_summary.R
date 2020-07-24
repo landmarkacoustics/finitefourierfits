@@ -74,7 +74,7 @@ half.fft <- function(fft.size) {
 #' @export
 fourier.summary <- function(x, sample.rate, multiplier=4L) {
     N <- length(x)
-    fft.size <- multiplier * nextn(N, 2)
+    fft.size <- nextn(multiplier * N, 2)
     result <- list(dft=fft(c(x, rep(0, fft.size - N))),
                    fft.size=fft.size,
                    sample.rate=sample.rate)

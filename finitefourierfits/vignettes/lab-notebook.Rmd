@@ -199,10 +199,10 @@ I think I got it working:
 ```{r, fig.dim=c(6, 6), out.width="95%"}
 x <- seq(-2, 2, length.out=401)
 y <- 10*(x/2)^2 + rnorm(length(x))
-tmp <- finitefourierfits::fffit(x, y)
+tmp <- finitefourierfits::fffit(x, y-mean(y))
 summary(tmp)
 plot(x, y, las=1, col="blue", pch=16, xlab=expression(x), ylab=expression(f(x)))
-lines(x, predict(tmp), col="orange", lwd=2)
+lines(x, predict(tmp)+mean(y), col="orange", lwd=2)
 ```
 
 # 2020 July 20
@@ -380,3 +380,52 @@ that remains as a slight tricky spot is that there are two ways that the sign
 of the amplitude terem may be reversed. It happens when the sign of the
 frequency term is reversed and when the phase is shifted by pi. I can live with
 those issues in real life.
+
+### It's not magic, but it's OK
+
+The approach definitely requires some parameter twiddling to get a decent fit
+when the input is not a sum of cosines. However, it can get pretty close if you
+break up the input reasonably well. For example, check this out!
+
+```{r, fig.dim=c(6, 6), out.width="95%"}
+a <- 30
+n <- sqrt(2)
+u <- seq(0, 10, 0.01)
+v <- a * u^n * exp(-u) + rnorm(length(u))
+parts <- list(low = u < 1,
+	          mid = u > 0.5 & u < 7,
+			  high = u > 6)
+fits <- lapply(parts, function(f){
+	fffit(u[f], v[f] - mean(v[f]), pad.multiplier=3)
+	})
+fits$all <- fffit(u, v - mean(v), pad.multiplier=3)
+fits$nls <- nls(v ~ a*u^n*exp(-u), start=list(a=1, n=1))
+colors <- list(all="cyan",
+	           low="orange",
+	           mid="green",
+			   high="darkred",
+			   nls="black")
+plot(v ~ u, col="blue", las=1, cex=2)
+invisible(sapply(names(colors),
+	             function(n) {
+				     if (n %in% names(parts)) {
+					     f <- parts[[n]]
+					     x <- u[f]
+						 y <- predict(fits[[n]]) + mean(v[f])
+					 } else {
+					     x <- u
+						 y <- predict(fits[[n]]) + ifelse(n=="all", mean(v), 0)
+					 }
+					 lines(x, y,
+					       col=colors[[n]],
+					       lwd=ifelse(n=="nls", 2, 3),
+						   lty=ifelse(n=="nls", 2, 1))
+	             }))
+legend("topright",
+       legend=names(colors),
+	   lty=ifelse(names(colors)=="nls", 2, 1),
+	   lwd=2,
+	   col=as.character(colors),
+	   title="Fit",
+	   bty="n")
+```

@@ -39,7 +39,7 @@ test_that("An `fffit` matches a simple cosine curve", {
     expect_true("fffit" %in% class(fit))
     expect_equal(names(fit),
                  c("dft", "terms", "models", "selection.scores", "best.index"))
-    expect_equal(fit$best.index, 3)
+    expect_equal(fit$best.index, 1)
     expect_equal(formula(fit),
                  y ~ a1 * cos(2 * pi * f1 * x - p1))
     expect_equal(coefs.w.unwrapped.phase(fit),
@@ -57,7 +57,7 @@ test_that("An `fffit` of a simple cosine curve with a negative phase", {
     expect_true("fffit" %in% class(fit))
     expect_equal(names(fit),
                  c("dft", "terms", "models", "selection.scores", "best.index"))
-    expect_equal(fit$best.index, 3)
+    expect_equal(fit$best.index, 1)
     expect_equal(formula(fit),
                  y ~ a1 * cos(2 * pi * f1 * x - p1))
     expect_equal(coefs.w.unwrapped.phase(fit),
@@ -77,7 +77,7 @@ test_that("An `fffit` of a simple cosine curve with a nonzero mean", {
     expect_true("fffit" %in% class(fit))
     expect_equal(names(fit),
                  c("dft", "terms", "models", "selection.scores", "best.index"))
-    expect_equal(fit$best.index, 3)
+    expect_equal(fit$best.index, 1)
     expect_equal(formula(fit),
                  y ~ a1 * cos(2 * pi * f1 * x - p1))
     expect_equal(coefs.w.unwrapped.phase(fit),
@@ -87,14 +87,16 @@ test_that("An `fffit` of a simple cosine curve with a nonzero mean", {
 
 
 test_that("An `fffit` matches a simple line", {
-    m <- 2048
+    m <- 20
     b <- -sqrt(2)
     y <- m*N*x + b + rnorm(N)
 
     fit <- fffit(N*x, y)
 
     expect_equal(fit$best.index, 2)
-    expect_equal(coef(fit), c(`(Intercept)`=b, x=m), tolerance=0.001)
+    expect_equal(coefs.w.unwrapped.phase(fit),
+                 c(b=b, m=m),
+                 tolerance=0.01)
 })
 
 
@@ -105,8 +107,8 @@ test_that("An `fffit` matches a simple parabola", {
 
     fit <- fffit(N*x, y)
 
-    expect_equal(fit$best.index, 3)
-    expect_equal(length(coef(fit)), 3 * (fit$best.index-2))
+    expect_equal(fit$best.index, 1)
+    expect_equal(length(coef(fit)), 3 * fit$best.index)
 })
 
 
@@ -118,10 +120,24 @@ test_that("Two cosine curves are fit by a 6-term `fffit`", {
 
     fit <- fffit(x, y)
 
-    expect_equal(fit$best.index, 4)
+    expect_equal(fit$best.index, 2)
     expect_equal(coefs.w.unwrapped.phase(fit),
                  c(a1=a[1], a2=a[2],
                    f1=f[1], f2=f[2],
                    p1=.unwrap(p[1]), p2=.unwrap(p[2])),
+                 tolerance=0.001)
+})
+
+
+test_that("`fffit` can handle an irrational transcendantal function", {
+    a <- 20
+    u <- seq(0, 10, 0.01)
+    v <- a * u * exp(-u) + rnorm(length(u))
+    fit <- fffit(u, v - mean(v), pad.multiplier=6)
+
+    expect_equal(coefs.w.unwrapped.phase(fit),
+                 c(a1=3.49, a2=-0.178, a3=-2.11,
+                   f1=0.103, f2=0.832, f3=0.16,
+                   p1=.unwrap(1.46), p2=.unwrap(0.89), p3=.unwrap(-2.46)),
                  tolerance=0.001)
 })

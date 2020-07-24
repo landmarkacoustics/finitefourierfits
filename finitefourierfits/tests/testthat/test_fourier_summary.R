@@ -49,8 +49,8 @@ test_that("the whole fourier.summary thing works", {
 
 
 test_that("multiplier changes the fft.size of a fourier.summary", {
-    K <- nextn(length(X), 2)
     sapply(seq_len(8), function(m) {
-        expect_equal(fourier.summary(X, 1, m)$fft.size, m*K)
+        K <- m*length(X)
+        expect_equal(fourier.summary(X, 1, m)$fft.size, nextn(K, 2))
     })
 })

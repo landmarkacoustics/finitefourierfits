@@ -45,10 +45,11 @@ fffit <- function(x, y,
                      })
     models <- models[!is.na(models)]
 
-    fallback.models <- list(lm(y ~ 1, datums),
-                            lm(y ~ x, datums))
-
-    models <- c(fallback.models, models)
+    if (length(models) == 0) {
+        models <- list(nls(y ~ b, datums, list(b=0)),
+                       nls(y ~ b + m*x, datums, list(b=0, m=0))
+                       )
+    }
 
     scores <- sapply(models, model.selector)
 
@@ -88,8 +89,7 @@ predict.fffit <- function(object, newdata=NULL, index=NULL, ...) {
     if (is.null(newdata)) {
         return(fitted(mo))
     }
-    x <- .find.independent.variable(newdata)
-    return(predict(mo, data.frame(w=object$u$FUN(x))))
+    return(predict(mo, newdata, ...))
 }
 
 
