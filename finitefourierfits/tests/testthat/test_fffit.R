@@ -141,3 +141,42 @@ test_that("`fffit` can handle an irrational transcendantal function", {
                    p1=.unwrap(1.46), p2=.unwrap(0.89), p3=.unwrap(-2.46)),
                  tolerance=0.001)
 })
+
+
+a <- c(5, 3)
+f <- c(7, 2) * Hz / N
+y <- a[1] * sin(2*pi*f[1]*x) + a[2]*sin(2*pi*f[2]*x)
+fit <- fffit(x, y + rnorm(N))
+
+
+test_that("prediction works", {
+    expect_equal(as.numeric(predict(fit)), y, tolerance=0.1)
+})
+
+
+test_that("extracting coefficients works", {
+    expect_equivalent(abs(coef(fit)[1:2]), a, tolerance=0.02)
+    expect_equivalent(abs(coef(fit)[2+1:2]), f, tolerance=0.02)
+    expect_equivalent(abs(coef(fit)[4+1:2]), rep(pi/2, 2), tolerance=0.02)
+})
+
+
+test_that("ANOVA works", {
+    ftable <- anova(fit)
+    foo <- strsplit(attr(ftable, "heading")[[2]], "\n")[[1]]
+    lapply(seq_along(foo), function(n) {
+        s <- foo[[n]]
+        pivot <- grepRaw(":", s)
+        foo <- substr(s, 1, pivot - 1)
+        bar <- substr(s, pivot + 1, nchar(s))
+        expect_equal(foo, paste("Model", n))
+        expect_equal(formula(bar), formula(fit$models[[n]]))
+    })
+})
+
+
+test_that("extracting formulae works", {
+    sapply(seq_along(fit$models), function(n) {
+        expect_equal(formula(fit, index=n), formula(fit$models[[n]]))
+    })
+})
