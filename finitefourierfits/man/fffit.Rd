@@ -21,10 +21,10 @@ fffit(x, y, model.selector = BIC, max.terms = 10, pad.multiplier = 4)
 an FFFit model
 }
 \description{
-When a functional-looking relation is poorly approximated by the tools \code{lm},
-\code{glm}, or \code{nls}, one option is to use a linear combination of cosine terms
-to approximate the relation within a strictly bounded domain. This function
-does just that.
+When a functional-looking relation is poorly approximated by the tools
+\code{\link[=lm]{lm()}}, \code{\link[=glm]{glm()}}, or \code{\link[=nls]{nls()}}, one option is to use a linear combination of
+cosine terms to approximate the relation within a strictly bounded domain.
+This function does just that.
 }
 \examples{
 x <- rnorm(10)

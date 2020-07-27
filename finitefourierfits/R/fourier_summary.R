@@ -2,11 +2,11 @@
 
 #' Half of the input, rounded down to the nearest integer.
 #'
-#' \code{half.fft} returns the pivot index between the positive and negative
+#' `half.fft` returns the pivot index between the positive and negative
 #' frequencies in the output of [fft()].
 #'
 #' @param fft.size The length of the Discrete Fourier Transform window.
-#' @return An integer equal to half of 'fft.size`, rounded down.
+#' @return An integer equal to half of `fft.size`, rounded down.
 half.fft <- function(fft.size) {
     return(as.integer(fft.size/2))
 }
@@ -47,29 +47,19 @@ half.fft <- function(fft.size) {
 #' @param x A numeric vector to be Fourier transformed
 #' @param sample.rate The sample rate of the time series underlying `x`.
 #' @param multiplier optional, controls how much padding `x` gets.
-#' @return an S3 object of class `fourier.summary` with the following names:
-#'
-#' dft
-#' ~ The complex-valued [fft()] of x after it has been right-padded with zeros.
-#'
-#' fft.size
-#' ~ The length of `dft`
-#'
-#' sample.rate
-#' ~ This isn't actually used in the ctor, but it`s super useful to have here.
-#'
-#' a
-#' ~ The real-valued magnitudes of the non-negative frequency term.
-#'
-#' f
-#' ~ Frequencies in \[0, Nyquist\)
-#'
-#' p
-#' ~ The real-valued phases of each non-negative frequency term.
-#'
-#' magnitude.order
-#' ~ Indices into `a` that sort it from largest to smallest.
-#'
+#' @return an S3 object of class [fourier.summary()] with the following names:
+#' \describe{
+#' \item{dft}
+#' {The complex-valued [fft()] of x after it has been right-padded with zeros.}
+#' \item{fft.size} {The length of `dft`}
+#' \item{sample.rate}
+#' {This isn't actually used in the ctor, but it`s super useful to have here.}
+#' \item{a}{The real-valued magnitudes of the non-negative frequency term.}
+#' \item{f}{Frequencies in [0, Nyquist)}
+#' \item{p}{The real-valued phases of each non-negative frequency term.}
+#' \item{magnitude.order}
+#' {Indices into `a` that sort it from largest to smallest.}
+#' }
 #' @seealso [fft()], [half.fft()]
 #' @export
 fourier.summary <- function(x, sample.rate, multiplier=4L) {

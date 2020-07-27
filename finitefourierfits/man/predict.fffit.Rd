@@ -7,7 +7,7 @@
 \method{predict}{fffit}(object, newdata = NULL, index = NULL, ...)
 }
 \arguments{
-\item{object}{An \code{fffit} object}
+\item{object}{An \code{\link[=fffit]{fffit()}} object}
 
 \item{newdata}{A data frame with new independent and dependent variables.}
 
@@ -24,5 +24,5 @@ in the context of the \code{newdata}. This will give nonsensical results if the
 input domain is not within the bounds of the original analysis's domain.
 }
 \seealso{
-\code{\link{predict.nls}}
+\code{\link[=predict.nls]{predict.nls()}}
 }

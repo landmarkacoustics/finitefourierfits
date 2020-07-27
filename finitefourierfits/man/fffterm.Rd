@@ -7,24 +7,22 @@
 fffterm(ranking, obj)
 }
 \arguments{
-\item{ranking}{An integer representing where the term falls in some ordering}
-
-\item{obj}{A \code{\link[=fourier.summary]{fourier.summary()}} object.
+\item{ranking}{An integer representing where the term falls in some ordering
 of the terms of the DFT.}
+
+\item{obj}{A \code{\link[=fourier.summary]{fourier.summary()}} object.}
 }
 \value{
 an object of type \code{fffterm}, which has the following named members:
-a
-~ The computed amplitude of the term
-
-p
-~ The phase of the term
-
-f
-~ The frequency of the term
-
-term
-~ A string with format $a[n]cos(2 pi f[n] x + p[n])$ for ranking \code{n}.
+\describe{
+\item{a}{The computed amplitude of the term}
+\item{p}{The phase of the term}
+\item{f}{The frequency of the term}
+\item{term}
+{A string,
+"\eqn{a\mathrm{n}\,\cos(2\pi\,f\mathrm{n}\,x + p\mathrm{n}})",
+for the ranking \code{n}.}
+}
 }
 \description{
 Several pieces of information from each term go in to building an \code{\link[=fffit]{fffit()}},

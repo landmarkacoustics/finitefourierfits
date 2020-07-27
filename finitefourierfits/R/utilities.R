@@ -22,10 +22,10 @@
 #' Angular frequencies for a Discrete Fourier Transform
 #'
 #' If there are `fft.size` samples in the DFT then the frequencies run
-#' from 0 (inclusive) to $2pi$ (exclusive).
+#' from 0 (inclusive) to \eqn{2pi} (exclusive).
 #'
 #' @param fft.size The size of the DFT
-#' @return a vector of floats of length `fft.size` in $[0, 2pi)$.
+#' @return a vector of floats of length `fft.size` in \eqn{[0, 2\pi)}.
 #' @examples
 #' omegas(4)
 #' @export

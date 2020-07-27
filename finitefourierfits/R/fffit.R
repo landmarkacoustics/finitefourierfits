@@ -2,10 +2,10 @@
 
 #' Fit a small, Fourier basis-like model to data
 #'
-#' When a functional-looking relation is poorly approximated by the tools `lm`,
-#' `glm`, or `nls`, one option is to use a linear combination of cosine terms
-#' to approximate the relation within a strictly bounded domain. This function
-#' does just that.
+#' When a functional-looking relation is poorly approximated by the tools
+#' [lm()], [glm()], or [nls()], one option is to use a linear combination of
+#' cosine terms to approximate the relation within a strictly bounded domain.
+#' This function does just that.
 #'
 #' @param x Numeric, the independent variable
 #' @param y Numeric, the dependent variable
@@ -73,12 +73,12 @@ fffit <- function(x, y,
 #' in the context of the `newdata`. This will give nonsensical results if the
 #' input domain is not within the bounds of the original analysis's domain.
 #'
-#' @param object An `fffit` object
+#' @param object An [fffit()] object
 #' @param newdata A data frame with new independent and dependent variables.
 #' @param index optional, a specific model to summarize
 #' @param ... Additional arguments to `predict.nls`
 #' @return A numeric vector of predictions
-#' @seealso [`predict.nls`]
+#' @seealso [predict.nls()]
 #' @importFrom stats predict fitted
 #' @export
 predict.fffit <- function(object, newdata=NULL, index=NULL, ...) {

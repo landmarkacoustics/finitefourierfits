@@ -28,21 +28,18 @@
 #' and it makes sense to calculate and store them once.
 #'
 #' @param ranking An integer representing where the term falls in some ordering
-#' @param obj A [fourier.summary()] object.
 #' of the terms of the DFT.
+#' @param obj A [fourier.summary()] object.
 #' @return an object of type `fffterm`, which has the following named members:
-#' a
-#' ~ The computed amplitude of the term
-#'
-#' p
-#' ~ The phase of the term
-#'
-#' f
-#' ~ The frequency of the term
-#'
-#' term
-#' ~ A string with format $a\[n\]cos(2 pi f\[n\] x + p\[n\])$ for ranking `n`.
-#'
+#' \describe{
+#' \item{a}{The computed amplitude of the term}
+#' \item{p}{The phase of the term}
+#' \item{f}{The frequency of the term}
+#' \item{term}
+#' {A string,
+#' "\eqn{a\mathrm{n}\,\cos(2\pi\,f\mathrm{n}\,x + p\mathrm{n}})",
+#' for the ranking `n`.}
+#' }
 #' @seealso [fourier.summary()]
 #' @export
 fffterm <- function(ranking, obj) {
@@ -91,6 +88,5 @@ fffterm <- function(ranking, obj) {
                      .concatenate.starts,
                      term.list,
                      simplify=FALSE)
-    ##    return(result[sapply(result, function(x) !is.null(x))])
     return(c(result$a, result$f, result$p))
 }

@@ -14,28 +14,14 @@ fourier.summary(x, sample.rate, multiplier = 4L)
 \item{multiplier}{optional, controls how much padding \code{x} gets.}
 }
 \value{
-an S3 object of class \code{fourier.summary} with the following names:
-
-dft
-~ The complex-valued \code{\link[=fft]{fft()}} of x after it has been right-padded with zeros.
-
-fft.size
-~ The length of \code{dft}
-
-sample.rate
-~ This isn't actually used in the ctor, but it`s super useful to have here.
-
-a
-~ The real-valued magnitudes of the non-negative frequency term.
-
-f
-~ Frequencies in [0, Nyquist\)
-
-p
-~ The real-valued phases of each non-negative frequency term.
-
-magnitude.order
-~ Indices into \code{a} that sort it from largest to smallest.
+an S3 object of class \code{\link[=fourier.summary]{fourier.summary()}} with the following names:
+\describe{
+\item{dft}
+{The complex-valued \code{\link[=fft]{fft()}} of x after it has been right-padded with zeros.}
+\item{fft.size} {The length of \code{dft}}
+\item{sample.rate}
+{This isn't actually used in the ctor, but it\verb{s super useful to have here.\} \\item\{a\}\{The real-valued magnitudes of the non-negative frequency term.\} \\item\{f\}\{Frequencies in [0, Nyquist)\} \\item\{p\}\{The real-valued phases of each non-negative frequency term.\} \\item\{magnitude.order\} \{Indices into }a` that sort it from largest to smallest.}
+}
 }
 \description{
 \code{fourier.summary} zero-pads \code{x}, calculates the normal real to half-complex
