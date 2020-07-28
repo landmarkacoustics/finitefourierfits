@@ -1,0 +1,15 @@
+.argmin                 The index of the minimum element in a container
+anova.fffit             Comparing the Quality of the Possible Fits
+coef.fffit              The Coefficients of the Best Fit
+fffit                   Fit a small, Fourier basis-like model to data
+fffterm                 Summarize a DFT Term for Use in an FFFit
+finitefourierfits       Fit a Finite Fourier Basis to Data
+formula.fffit           The Formula of the Best Fit
+fourier.summary         Compute a DFT, and Some Helpful Summaries and
+                        Descriptors
+half.fft                Half of the input, rounded down to the nearest
+                        integer.
+omegas                  Angular frequencies for a Discrete Fourier
+                        Transform
+predict.fffit           Predicting from Finite Fourier Fits
+summary.fffit           Demonstrating the Quality of the Best Fit

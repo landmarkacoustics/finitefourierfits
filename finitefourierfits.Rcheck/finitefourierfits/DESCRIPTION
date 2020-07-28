@@ -1,0 +1,25 @@
+Package: finitefourierfits
+Title: Fit a Finite Fourier Basis to Data
+Version: 0.0.0.9000
+Authors@R: 
+    person(given = "Benjamin",
+           family = "Taft",
+           role = c("aut", "cre"),
+           email = "ben.taft@landmarkacoustics.com")
+Description: Curve-fitting that uses fft to approximate a 2D relationship, and
+			 then fine-tunes that fit with nls.
+Depends: R (>= 3.4.4)
+License: MIT + file LICENSE
+Encoding: UTF-8
+LazyData: true
+Roxygen: list(markdown = TRUE)
+RoxygenNote: 7.1.1
+Suggests: knitr, rmarkdown, testthat,
+Collate: 'finitefourierfits.R' 'utilities.R' 'fourier_summary.R'
+        'terms.R' 'fffit.R'
+VignetteBuilder: knitr
+NeedsCompilation: no
+Packaged: 2020-07-28 01:42:24 UTC; ben
+Author: Benjamin Taft [aut, cre]
+Maintainer: Benjamin Taft <ben.taft@landmarkacoustics.com>
+Built: R 3.4.4; ; 2020-07-28 01:43:14 UTC; unix
